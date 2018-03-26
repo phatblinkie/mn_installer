@@ -58,13 +58,27 @@ if [ $? -eq 0 ]; then
     if [ ! -d $homedir ]
       then
       echo "existing user have no home dir, or its not available. exiting.
-      echo 4
+      exit 4
     fi
 fi
 
 #one last check for ip structure. fail if its out of bounds
+#using ping cause im lazy with regex
+if [ "$YOURIP" != "a.b.c.d" ] 
+  then
+  echo IP value set for YOURIP variable, testing...
+  ping -W .1 -c 1 $YOURIP 2>/dev/null 1>/dev/null
+  #exit code 2 is an invalid host
+  if [ $? -eq "2" ] 
+    then
+    echo "ip format error, exiting." 
+  else
+    echo "ip looks ok. proceeding"
+    sleep 1
+  fi
+fi  
 
-exit 0
+
 ------pending  more updates, do not use yet
 
 #update packages
