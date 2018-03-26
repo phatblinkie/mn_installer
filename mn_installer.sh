@@ -42,15 +42,8 @@ if [ "$TOKEN" = "" ]
   exit 2
 fi
 
-#sanity check username pattern
-pattern=" |'|[A-Z]"
-if [ $NAME =~ $pattern ]
-  then
-  echo username rules breached. no spaces, or caps allowed.
-  exit 3
-fi
-
-#check if username already exists, if so, does it have a valid home dir for chain storage?
+#check if username already exists,(if not we will make it later)
+#if so, does it have a valid home dir for chain storage?
 getent passwd $NAME > /dev/null 
 if [ $? -eq 0 ]; then
     echo "User $NAME exists"
@@ -79,7 +72,8 @@ if [ "$YOURIP" != "a.b.c.d" ]
 fi  
 
 
-------pending  more updates, do not use yet
+exit;
+
 
 #update packages
 apt-get update
