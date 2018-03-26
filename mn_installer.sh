@@ -4,10 +4,10 @@
 
 #this one is on your masternode page, and is unique for each masternode you have
 #replace with your own values from poseidon
-MASTERNODE="----"
+MASTERNODE="--ddd--"
 
 #this one is on your account page, and is the only one for your account
-TOKEN=""
+TOKEN="ddd"
 
 #change ssh port to (recommended range is 1025-65535) 
 #if you change this from the default value of port 22, 
@@ -44,6 +44,7 @@ fi
 
 #check if username already exists,(if not we will make it later)
 #if so, does it have a valid home dir for chain storage?
+CREATEUSERNAME=0
 getent passwd $RUNAS_USER > /dev/null 
 if [ $? -eq 0 ]; then
     echo "User $RUNAS_USER exists"
@@ -55,6 +56,7 @@ if [ $? -eq 0 ]; then
     fi
  else
  echo "user $RUNAS_USER not found, will create"
+CREATEUSERNAME=1
  sleep 1
 fi
 
@@ -67,12 +69,21 @@ if [ "$YOURIP" != "a.b.c.d" ]
   #exit code 2 is an invalid host
   if [ $? -eq "2" ] 
     then
-    echo "ip format error, exiting." 
+    echo "IP address format error, exiting." 
   else
-    echo "ip looks ok. proceeding"
+    echo "IP address  looks ok. proceeding"
     sleep 1
   fi
 fi  
+
+
+
+#create the user if needed. just a run as user, not a login user, but they must have a home dir for the chain storage
+if [ "$CREATEUSERNAME" -eq "1" ]
+   then
+   adduser
+
+fi
 
 
 
@@ -97,21 +108,18 @@ if [ "$downloadresult" -ne "0" || "$chmodresult" -ne "0" ]
 fi
 
 
-exit 
 ######populate files#########
 echo -e "[Unit]
 Description=Pirl Master Node
 
 [Service]
-; location of the file with the exported variables
 EnvironmentFile=/etc/pirlnode-env
 
 Type=simple
-;created with useradd pirl
-User=root
-Group=root
+User=$RUNAS_USER
+Group=$RUNAS_USER
 
-ExecStart=/root/pirl
+ExecStart=/usr/local/bin/pirl-linux-amd64
 Restart=always
 
 [Install]
@@ -132,6 +140,8 @@ systemctl start pirlnode
 echo -e "\n\n can monitor with journalctl --unit=pirlnode -f \n\n"
 sleep 3
 
+
+exit
 #setup firewall
 apt-get install ufw -y
 #firewall rules
