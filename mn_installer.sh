@@ -1,28 +1,39 @@
+#!/bin/bash
 #define vars for node
 #these come from poseidon.pirl.io  
 #-------Change the values below to influence how the script sets up your node and firewall------#
 
 #this one is on your masternode page, and is unique for each masternode you have
-#replace with your own values from poseidon
-MASTERNODE="--ddd--"
+#replace with your own values from poseidon 
+## https://poseidon.pirl.io/accounts/masternodes-list-private/
+MASTERNODE="----"
 
 #this one is on your account page, and is the only one for your account
-TOKEN="ddd"
+## https://poseidon.pirl.io/accounts/settings/
+TOKEN=""
 
+
+
+###((((( highly recommended you change this! ))))))###
 #change ssh port to (recommended range is 1025-65535) 
 #if you change this from the default value of port 22, 
 # then the script will update your box to run ssh on the new port, and configure that value in the firewall
-SSHD_PORT="22"
+
+SSHD_PORT="22"    #(recommended range is 1025-65535)
+
+#important, ssh will only be allowed through firewall to everyone, only 
+#if you do not set a static ip below. if you have a static ip then all ports will be allowed from it
+
 
 #your home ip address for the firewall to only allow your ip into ssh
 #if you do not have an ip at home that stays the same, leave the below value
 #if left to be a.b.c.d then the script will ignore it
-YOURIP="a.b.c.d"
+YOURIP="a.b.c.d"       #no cidr addressing please only a single ip here
 
 #username you want the service to run as, if you want it to run as root, leave root
 #if you want it to run as pirl put in pirl. no spaces allowed, and all lower case please.
 #this user will not be used as a login user, so no password will be set.
-RUNAS_USER="root"
+RUNAS_USER="root"      #recommended username is pirl or root
 
 
 
@@ -40,6 +51,17 @@ if [ "$TOKEN" = "" ]
   then
   echo Please set your account token from poseidon.pirl.io and run again
   exit 2
+fi
+
+#check sshd port
+CHANGESSH="0"
+if [ "$SSHD_PORT" -eq "22" ]
+  then
+  echo sshd port default, and is 22
+  will not change service
+  sleep 1
+else
+CHANGESSH="1"
 fi
 
 #check if username already exists,(if not we will make it later)
@@ -72,14 +94,26 @@ if [ "$YOURIP" != "a.b.c.d" ]
     echo "IP address format error, exiting." 
   else
     echo "IP address  looks ok. proceeding"
+    FIREWALLIP_OK="1"
     sleep 1
   fi
 fi  
+echo "OK, initial sanity checks look ok, proceeding"
+echo "next step Creating service username if needed in 10 seconds"
+sleep 5
+echo "4"
+sleep 1
+echo "3"
+sleep 1
+echo "2"
+sleep 1
+echo "1"
+sleep 1 
 
-
-################create the user if needed##################
-#create the user if needed. just a run as user, not a login user,
-#but they must have a home dir for the chain storage
+############### create the user if needed #################
+###########################################################
+###create the user if needed. just a run as user, not a login user,
+###but they must have a home dir for the chain storage
 
 if [ "$CREATEUSERNAME" -eq "1" ]
    then
@@ -100,6 +134,16 @@ if [ $? -eq 0 ]; then
  exit 4
 fi
 
+echo "next step installing the masternode binary in 10 seconds"
+sleep 5
+echo "4"
+sleep 1
+echo "3"
+sleep 1
+echo "2"
+sleep 1
+echo "1"
+sleep 1
 
 ############# grab the node binary and chmod ############################
 #########################################################################
@@ -130,6 +174,16 @@ fi
 #check the files md5sum to make sure it was not corrupted in transit
 #pending md5file creation on repo
 
+echo "next step updating or installing systemd service in 10 seconds"
+sleep 5
+echo "4"
+sleep 1
+echo "3"
+sleep 1
+echo "2"
+sleep 1
+echo "1"
+sleep 1
 
 
 ############ populate files for systemd service #########
@@ -165,12 +219,42 @@ systemctl enable pirlnode
 systemctl start pirlnode
 
 echo -e "\n\n can monitor with journalctl --unit=pirlnode -f \n\n"
-sleep 3
+
+echo "next step updating SSH port in 10 seconds"
+sleep 5
+echo "4"
+sleep 1
+echo "3"
+sleep 1
+echo "2"
+sleep 1
+echo "1"
+sleep 1
 
 
 ############## update ssh port ###################
 ##################################################
+if [ "$CHANGESSH" -eq "1" ]
+  then
+  #comment out old port
+   sed -i "s@Port@#Port@" /etc/ssh/sshd_config
+  #add new port to bottom
+  echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
+  #restart ssh
+  systemctl restart ssh
 
+  echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
+fi
+echo "next step updating packages for operating system in 10 seconds"
+sleep 5
+echo "4"
+sleep 1
+echo "3"
+sleep 1
+echo "2"
+sleep 1
+echo "1"
+sleep 1
 
 
 
@@ -178,20 +262,43 @@ sleep 3
 ##################################################
 apt-get update
 apt-get dist-upgrade -y
+apt-get install ufw -y
 
-
-exit
+echo "next step setting up firewall in 10 seconds"
+sleep 5
+echo "4"
+sleep 1
+echo "3"
+sleep 1
+echo "2"
+sleep 1
+echo "1"
+sleep 1
 ################## setup firewall #################
 ###################################################
-apt-get install ufw -y
+
 #firewall rules
 systemctl enable ufw
-ufw allow from $YOURIP
+if [ "$FIREWALLIP_OK" = "1" ]
+  then
+  ufw allow from $YOURIP
+else
+#port for ssh opened if user does not have static ip at home.
+ufw allow $SSHD_PORT/tcp
+fi
+
+#default ports for pirlnode
 ufw allow 30303/tcp
 ufw allow 30303/udp
+
+#allow all outgoing
 ufw default allow outgoing
+
+#block everything else incoming
 ufw default deny incoming
 ufw enable
+
+#show the status
 ufw status
 
 
