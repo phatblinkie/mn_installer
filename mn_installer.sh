@@ -152,19 +152,19 @@ sleep 1
 ##make sure its not running if for reason the service is already there, do clean up
 ## incase it was run again  for some reason
 
-systemctl stop pirlnode
+systemctl stop pirlnode 2>/dev/null 1>/dev/null
 if [ -e /usr/local/bin/pirl-linux-amd6 ]
   then
   rm -f /usr/local/bin/pirl-linux-amd64 2>/dev/null
 fi
 #get pirl node
 wget -O /usr/local/bin/pirl-linux-amd64 http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64
-downloadresult = $?
+downloadresult=$?
 chmod 0755 /usr/local/bin/pirl-linux-amd64
-chmodresult = $?
+chmodresult=$?
 
 #double check download and perms
-if [ "$downloadresult" -ne "0" || "$chmodresult" -ne "0" ]
+if [ "$downloadresult" -ne "0" ] || [ "$chmodresult" -ne "0" ]
   then
   echo "error happened downloading the node from http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64"
   echo "or trying to chmod it to 0755 at location /usr/local/bin/pirl-linux-amd64"
