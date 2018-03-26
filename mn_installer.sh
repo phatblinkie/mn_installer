@@ -1,4 +1,5 @@
 #!/bin/bash
+clear
 #define vars for node
 #these come from poseidon.pirl.io  
 #-------Change the values below to influence how the script sets up your node and firewall------#
@@ -209,6 +210,10 @@ echo -e "MASTERNODE=\"$MASTERNODE\"
 TOKEN=\"$TOKEN\"
 ">/etc/pirlnode-env
 
+#setup a little link for monitoring to be an easier command
+echo "journalctl -f -u pirlnode">/usr/local/bin/monitor
+chmod 0755 /usr/local/bin/monitor
+
 ###reload in case it was there before, and now could be changed
 systemctl daemon-reload
 
@@ -218,9 +223,9 @@ systemctl enable pirlnode
 ###start the node
 systemctl start pirlnode
 
-echo -e "\n\n can monitor with journalctl --unit=pirlnode -f \n\n"
+#echo -e "\n\n can monitor with journalctl --unit=pirlnode -f \n\n"
 
-echo "next step updating SSH port in 10 seconds"
+echo "next step updating packages for operating system in 10 seconds"
 sleep 5
 echo "4"
 sleep 1
@@ -230,6 +235,16 @@ echo "2"
 sleep 1
 echo "1"
 sleep 1
+
+clear
+echo this will take a few minutes
+sleep 4
+
+############## update packages ###################
+##################################################
+apt-get update
+apt-get dist-upgrade -y
+apt-get install ufw -y
 
 
 ############## update ssh port ###################
@@ -245,24 +260,8 @@ if [ "$CHANGESSH" -eq "1" ]
 
   echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
 fi
-echo "next step updating packages for operating system in 10 seconds"
-sleep 5
-echo "4"
-sleep 1
-echo "3"
-sleep 1
-echo "2"
-sleep 1
-echo "1"
-sleep 1
 
 
-
-############## update packages ###################
-##################################################
-apt-get update
-apt-get dist-upgrade -y
-apt-get install ufw -y
 
 echo "next step setting up firewall in 10 seconds"
 sleep 5
@@ -298,13 +297,17 @@ ufw default allow outgoing
 ufw default deny incoming
 ufw enable
 
+clear
 #show the status
 ufw status
 
 
 echo "all done!"
+echo ""
+echo ""
 echo "commands you can run now:"
-echo "firewall status = ufw status"
-echo "service status = systemctl status pirlnode"
-echo "service logs = journalctl -f -u pirlnode  -or- monitor"
+echo "firewall status command = ufw status"
+echo "service status  command = systemctl status pirlnode"
+echo "service logs    command = journalctl -f -u pirlnode  -or-  monitor"
 
+exit 0
