@@ -77,38 +77,63 @@ if [ "$YOURIP" != "a.b.c.d" ]
 fi  
 
 
+################create the user if needed##################
+#create the user if needed. just a run as user, not a login user,
+#but they must have a home dir for the chain storage
 
-#create the user if needed. just a run as user, not a login user, but they must have a home dir for the chain storage
 if [ "$CREATEUSERNAME" -eq "1" ]
    then
-   adduser
+   getent passwd $RUNAS_USER > /dev/null || useradd -r -m -s /usr/sbin/nologin -c "pirl masternode user" $RUNAS_USER
+fi
 
+#make sure its was created ok
+getent passwd $RUNAS_USER > /dev/null 
+if [ $? -eq 0 ]; then
+    echo "User $RUNAS_USER created"
+    homedir=$( getent passwd "$RUNAS_USER" | cut -d: -f6 )
+    if [ ! -d $homedir ]
+      then
+      echo "New users home dir created as well @ $homedir"
+    fi
+ else
+ echo "user $RUNAS_USER not found, tried to create but failed. stopping"
+ exit 4
 fi
 
 
+############# grab the node binary and chmod ############################
+#########################################################################
+###if we got this far then the user exists, we will store the binary as a system file
+###the chain will end up being stored on this users home dir, at /home/username/.pirl/
+##make sure its not running if for reason the service is already there, do clean up
+## incase it was run again  for some reason
 
-
-
-#update packages
-apt-get update
-apt-get dist-upgrade -y
-
+systemctl stop pirlnode
+if [ -e /usr/local/bin/pirl-linux-amd6 ]
+  then
+  rm -f /usr/local/bin/pirl-linux-amd64 2>/dev/null
+fi
 #get pirl node
 wget -O /usr/local/bin/pirl-linux-amd64 http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64
 downloadresult = $?
 chmod 0755 /usr/local/bin/pirl-linux-amd64
 chmodresult = $?
 
-#double check
+#double check download and perms
 if [ "$downloadresult" -ne "0" || "$chmodresult" -ne "0" ]
   then
   echo "error happened downloading the node from http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64"
   echo "or trying to chmod it to 0755 at location /usr/local/bin/pirl-linux-amd64"
-  exit 5
+  exit 6
 fi
 
+#check the files md5sum to make sure it was not corrupted in transit
+#pending md5file creation on repo
 
-######populate files#########
+
+
+############ populate files for systemd service #########
+#########################################################
 echo -e "[Unit]
 Description=Pirl Master Node
 
@@ -130,6 +155,8 @@ echo -e "MASTERNODE=\"$MASTERNODE\"
 TOKEN=\"$TOKEN\"
 ">/etc/pirlnode-env
 
+###reload in case it was there before, and now could be changed
+systemctl daemon-reload
 
 ####enable the node
 systemctl enable pirlnode
@@ -141,8 +168,21 @@ echo -e "\n\n can monitor with journalctl --unit=pirlnode -f \n\n"
 sleep 3
 
 
+############## update ssh port ###################
+##################################################
+
+
+
+
+############## update packages ###################
+##################################################
+apt-get update
+apt-get dist-upgrade -y
+
+
 exit
-#setup firewall
+################## setup firewall #################
+###################################################
 apt-get install ufw -y
 #firewall rules
 systemctl enable ufw
@@ -154,4 +194,10 @@ ufw default deny incoming
 ufw enable
 ufw status
 
+
+echo "all done!"
+echo "commands you can run now:"
+echo "firewall status = ufw status"
+echo "service status = systemctl status pirlnode"
+echo "service logs = journalctl -f -u pirlnode  -or- monitor"
 
