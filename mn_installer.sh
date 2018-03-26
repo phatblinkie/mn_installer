@@ -38,21 +38,24 @@ fi
 
 if [ "$TOKEN" = "" ]
   then
-  echo Please set your account token from poseidon and run again
+  echo Please set your account token from poseidon.pirl.io and run again
   exit 2
 fi
 
 #check if username already exists,(if not we will make it later)
 #if so, does it have a valid home dir for chain storage?
-getent passwd $NAME > /dev/null 
+getent passwd $RUNAS_USER > /dev/null 
 if [ $? -eq 0 ]; then
-    echo "User $NAME exists"
-    homedir=$( getent passwd "$NAME" | cut -d: -f6 )
+    echo "User $RUNAS_USER exists"
+    homedir=$( getent passwd "$RUNAS_USER" | cut -d: -f6 )
     if [ ! -d $homedir ]
       then
-      echo "existing user have no home dir, or its not available. exiting.
+      echo "existing user has no home dir, or its not available. exiting."
       exit 4
     fi
+ else
+ echo "user $RUNAS_USER not found, will create"
+ sleep 1
 fi
 
 #one last check for ip structure. fail if its out of bounds
@@ -72,26 +75,29 @@ if [ "$YOURIP" != "a.b.c.d" ]
 fi  
 
 
-exit;
+
 
 
 #update packages
 apt-get update
 apt-get dist-upgrade -y
-apt-get install ufw -y
-#firewall rules
-systemctl enable ufw
-ufw allow from $YOURIP
-ufw allow 30303/tcp
-ufw allow 30303/udp
-ufw default allow outgoing
-ufw default deny incoming
-ufw enable
-ufw status
-#get pirl node
-wget http://release.pirl.io/downloads/masternode/linux/pirl
-chmod 0755 pirl
 
+#get pirl node
+wget -O /usr/local/bin/pirl-linux-amd64 http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64
+downloadresult = $?
+chmod 0755 /usr/local/bin/pirl-linux-amd64
+chmodresult = $?
+
+#double check
+if [ "$downloadresult" -ne "0" || "$chmodresult" -ne "0" ]
+  then
+  echo "error happened downloading the node from http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64"
+  echo "or trying to chmod it to 0755 at location /usr/local/bin/pirl-linux-amd64"
+  exit 5
+fi
+
+
+exit 
 ######populate files#########
 echo -e "[Unit]
 Description=Pirl Master Node
@@ -126,5 +132,16 @@ systemctl start pirlnode
 echo -e "\n\n can monitor with journalctl --unit=pirlnode -f \n\n"
 sleep 3
 
+#setup firewall
+apt-get install ufw -y
+#firewall rules
+systemctl enable ufw
+ufw allow from $YOURIP
+ufw allow 30303/tcp
+ufw allow 30303/udp
+ufw default allow outgoing
+ufw default deny incoming
+ufw enable
+ufw status
 
-##add the php stuff here
+
