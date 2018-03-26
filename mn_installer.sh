@@ -58,7 +58,7 @@ CHANGESSH="0"
 if [ "$SSHD_PORT" -eq "22" ]
   then
   echo sshd port default, and is 22
-  will not change service
+  echo will not change service
   sleep 1
 else
 CHANGESSH="1"
