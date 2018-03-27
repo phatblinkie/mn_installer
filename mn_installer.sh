@@ -121,7 +121,7 @@ if [ "$CREATEUSERNAME" -eq "1" ]
    getent passwd $RUNAS_USER > /dev/null || useradd -r -m -s /usr/sbin/nologin -c "pirl masternode user" $RUNAS_USER
 fi
 
-#make sure its was created ok
+#make sure its was created
 getent passwd $RUNAS_USER > /dev/null 
 if [ $? -eq 0 ]; then
     echo "User $RUNAS_USER created"
