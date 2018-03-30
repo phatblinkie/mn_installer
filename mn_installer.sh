@@ -21,6 +21,7 @@ TOKEN=""
 # then the script will update your box to run ssh on the new port, and configure that value in the firewall
 
 SSHD_PORT="22"    #(recommended range is 1025-65535)
+#DO NOT USE PORT 30303
 
 #important, ssh will only be allowed through firewall to everyone, only 
 #if you do not set a static ip below. if you have a static ip then all ports will be allowed from it
@@ -54,8 +55,15 @@ if [ "$TOKEN" = "" ]
   exit 2
 fi
 
+
+
 #check sshd port
 CHANGESSH="0"
+if [ "$SSHD_PORT" -eq "30303" ]
+  then
+  echo "you are not allowed to use port 30303, pick something else for ssh"
+  exit 2
+fi
 if [ "$SSHD_PORT" -eq "22" ]
   then
   echo sshd port default, and is 22
