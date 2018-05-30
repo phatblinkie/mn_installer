@@ -167,6 +167,7 @@ if [ -e /usr/local/bin/pirl-linux-amd6 ]
   rm -f /usr/local/bin/pirl-linux-amd64 2>/dev/null
 fi
 #get pirl node
+echo "downloading latest PIRL Masternode"
 wget -O /usr/local/bin/pirl-linux-amd64 http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64
 downloadresult=$?
 chmod 0755 /usr/local/bin/pirl-linux-amd64
@@ -197,7 +198,7 @@ sleep 1
 
 ############ populate files for systemd service #########
 #########################################################
-echo -e "[Unit]
+echo "[Unit]
 Description=Pirl Master Node
 
 [Service]
@@ -214,7 +215,7 @@ Restart=always
 WantedBy=default.target
 ">/etc/systemd/system/pirlnode.service
 
-echo -e "MASTERNODE=\"$MASTERNODE\"
+echo "MASTERNODE=\"$MASTERNODE\"
 TOKEN=\"$TOKEN\"
 ">/etc/pirlnode-env
 
@@ -253,6 +254,7 @@ sleep 4
 apt-get update
 apt-get dist-upgrade -y
 apt-get install ufw -y
+apt-get install fail2ban -y
 
 
 ############## update ssh port ###################
@@ -283,6 +285,10 @@ echo "1"
 sleep 1
 ################## setup firewall #################
 ###################################################
+#enable fail2ban
+systemctl enable fail2ban
+systemctl start fail2ban
+
 
 #firewall rules
 systemctl enable ufw
