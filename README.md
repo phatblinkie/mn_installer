@@ -2,7 +2,7 @@
 script to install masternode for pirl on stock ubuntu 16 64bit
 This should be run as root and will do the following
 1. update your boxes packages from the ubuntu repos
-2. make a pirl username to run the service as, and a home directory if eeeded
+2. make a pirl username to run the service as, and a home directory if neeeded
 3. download the pirl masternode binary and set permissions on it
 4. setup a systemd service named pirlnode, enable it, and start it
 5. make a short cut script file called "monitor" to make it easier to see the logs
