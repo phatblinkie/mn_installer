@@ -1,141 +1,141 @@
-#!/bin/bash
-clear
-#define vars for node
-#these come from poseidon.pirl.io  
-#-------Change the values below to influence how the script sets up your node and firewall------#
+#!/usr/bin/env bash
 
-#this one is on your masternode page, and is unique for each masternode you have
-#replace with your own values from poseidon 
+SECTION_SEPARATOR="#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#"
+
+function validateIP()
+ {
+         local ip=$1
+         local stat=1
+         if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+                OIFS=$IFS
+                IFS='.'
+                ip=($ip)
+                IFS=$OIFS
+                [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
+                && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+                stat=$?
+        fi
+        return $stat
+}
+
+echo $SECTION_SEPARATOR
+
 ## https://poseidon.pirl.io/accounts/masternodes-list-private/
-MASTERNODE="----"
+MASTERNODE=""
+while [ "$MASTERNODE" = "" ]; do
+  echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
+  read -p 'Enter MN token:' MASTERNODE
+  echo
+done
 
-#this one is on your account page, and is the only one for your account
+echo $SECTION_SEPARATOR
+
 ## https://poseidon.pirl.io/accounts/settings/
 TOKEN=""
+while [ "$TOKEN" = "" ]; do
+  echo "Copy/Paste in your POSEIDON account's token.  It can be found at https://poseidon.pirl.io/accounts/settings/"
+  read -p 'Enter TOKEN:' TOKEN
+  echo
+done
 
+echo $SECTION_SEPARATOR
 
-
-###((((( highly recommended you change this! ))))))###
-#change ssh port to (recommended range is 1025-65535) 
-#if you change this from the default value of port 22, 
-# then the script will update your box to run ssh on the new port, and configure that value in the firewall
-
-SSHD_PORT="22"    #(recommended range is 1025-65535)
+###((((( highly recommended you change the port SSH server listens on! ))))))###
+TEST_SSH_PORT=22  #(recommended range is 1025-65535)
+ASK_SSH='y'
 #DO NOT USE PORT 30303
+while [ "$ASK_SSH" = "y" ]; do
+  #clear
+  read -p "Would you like to change SSH server to listen on a non-default port? (y/n): " SET_SSH
+  if [ "$SET_SSH" = "y" ]; then
+    read -p "What port should SSH server listen on? (Options: 1024-65535 but not 30303): " TEST_SSH_PORT
+  fi
+  if [ $TEST_SSH_PORT -eq 22 ] || ([ $TEST_SSH_PORT -ne 30303 ] && [ $TEST_SSH_PORT -gt 1023 ] && [ $TEST_SSH_PORT -lt 65536 ]); then
+    ASK_SSH='n'
+    SSHD_PORT=$TEST_SSH_PORT
+  else
+    echo "SSH cannot run on port 30303, nor be on a port less than 1024, nor be on a port higher than 65535.  Try again."
+    TEST_SSH_PORT=22
+  fi
+  echo
+done
 
-#important, ssh will only be allowed through firewall to everyone, only 
-#if you do not set a static ip below. if you have a static ip then all ports will be allowed from it
+#check sshd port
+CHANGESSH="0"
+if [ "$SSHD_PORT" != "22" ]; then
+  CHANGESSH="1"
+fi
 
+echo $SECTION_SEPARATOR
 
 #your home ip address for the firewall to only allow your ip into ssh
 #if you do not have an ip at home that stays the same, leave the below value
 #if left to be a.b.c.d then the script will ignore it
-YOURIP="a.b.c.d"       #no cidr addressing please only a single ip here
+TEST_IP_ADDRESS=""
+YOURIP=""
+while [ "$TEST_IP_ADDRESS" = "" ] && [ "$YOURIP" = "" ]; do
+  echo "If you wish to limit SSH access to a single IP address enter it here."
+  echo "NOTE:  Setting this will secure your server to ONLY allow SSH from this IP address."
+  echo "DO NOT set this if you don't have a static IP address to source your SSH sessions to this server from!"
+  read -p "Enter in your source IP address.  (Leave blank if you wish to allow from any IP.) IP Address: " TEST_IP_ADDRESS
+### This still doesn't work! ###
+#  if [ $(validateIP $TEST_IP_ADDRESS) -eq 0 ]; then
+#    YOURIP=$TEST_IP_ADDRESS
+#    FIREWALLIP_OK="1"
+#    TEST_IP_ADDRESS=""
+#  elif [ "$TEST_IP_ADDRESS" = "" ]; then
+#    YOURIP="a.b.c.d"
+#  fi
+### Instead do no checking ###
+  if [ "$TEST_IP_ADDRESS" = "" ]; then
+    YOURIP="a.b.c.d"
+    FIREWALLIP_OK="0"
+  else
+    YOURIP=$TEST_IP_ADDRESS
+    FIREWALLIP_OK="1"
+    TEST_IP_ADDRESS=""
+  fi
+  echo
+done
+
+echo $SECTION_SEPARATOR
 
 #username you want the service to run as, if you want it to run as root, leave root
 #if you want it to run as pirl put in pirl. no spaces allowed, and all lower case please.
 #this user will not be used as a login user, so no password will be set.
-RUNAS_USER="root"      #recommended username is pirl or root
-
-
-
-######################################################################
-########################## No editing below this #####################
-######################################################################
-#first, check the tokens
-if [ "$MASTERNODE" = "----" ]
-  then
-  echo Please set your master node token from poseidon and run again
-  exit 1
-fi
-
-if [ "$TOKEN" = "" ]
-  then
-  echo Please set your account token from poseidon.pirl.io and run again
-  exit 2
-fi
-
-
-
-#check sshd port
-CHANGESSH="0"
-if [ "$SSHD_PORT" -eq "30303" ]
-  then
-  echo "you are not allowed to use port 30303, pick something else for ssh"
-  exit 2
-fi
-if [ "$SSHD_PORT" -eq "22" ]
-  then
-  echo sshd port default, and is 22
-  echo will not change service
-  sleep 1
-else
-CHANGESSH="1"
+read -p "What username should the PIRL Masternode run as? (root, pirl, or leave blank to run as current user): " RUNAS_USER
+if [ "$TEST_RUNAS_USER" = "" ]; then
+  RUNAS_USER=`logname`
 fi
 
 #check if username already exists,(if not we will make it later)
 #if so, does it have a valid home dir for chain storage?
 CREATEUSERNAME=0
-getent passwd $RUNAS_USER > /dev/null 
+getent passwd $RUNAS_USER > /dev/null
 if [ $? -eq 0 ]; then
     echo "User $RUNAS_USER exists"
     homedir=$( getent passwd "$RUNAS_USER" | cut -d: -f6 )
-    if [ ! -d $homedir ]
-      then
-      echo "existing user has no home dir, or its not available. exiting."
+    if [ ! -d $homedir ]; then
+      echo "$RUNAS_USER has no home dir, or its not available. exiting."
       exit 4
     fi
  else
- echo "user $RUNAS_USER not found, will create"
-CREATEUSERNAME=1
- sleep 1
+   echo "User $RUNAS_USER not found, will create."
+   CREATEUSERNAME=1
+   sleep 1
 fi
 
-#one last check for ip structure. fail if its out of bounds
-#using ping cause im lazy with regex
-if [ "$YOURIP" != "a.b.c.d" ] 
-  then
-  echo IP value set for YOURIP variable, testing...
-  ping -W .1 -c 1 $YOURIP 2>/dev/null 1>/dev/null
-  #exit code 2 is an invalid host
-  if [ $? -eq "2" ] 
-    then
-    echo "IP address format error, exiting." 
-  else
-    echo "IP address  looks ok. proceeding"
-    FIREWALLIP_OK="1"
-    sleep 1
-  fi
-fi  
-echo "OK, initial sanity checks look ok, proceeding"
-echo "next step Creating service username if needed in 10 seconds"
-sleep 5
-echo "4"
-sleep 1
-echo "3"
-sleep 1
-echo "2"
-sleep 1
-echo "1"
-sleep 1 
-
-############### create the user if needed #################
-###########################################################
-###create the user if needed. just a run as user, not a login user,
-###but they must have a home dir for the chain storage
-
-if [ "$CREATEUSERNAME" -eq "1" ]
-   then
+#create the user if needed. just a run as user, not a login user, but they must have a home dir for the chain storage
+if [ "$CREATEUSERNAME" = "1" ]; then
    getent passwd $RUNAS_USER > /dev/null || useradd -r -m -s /usr/sbin/nologin -c "pirl masternode user" $RUNAS_USER
 fi
 
 #make sure its was created
-getent passwd $RUNAS_USER > /dev/null 
+getent passwd $RUNAS_USER > /dev/null
 if [ $? -eq 0 ]; then
     echo "User $RUNAS_USER created"
     homedir=$( getent passwd "$RUNAS_USER" | cut -d: -f6 )
-    if [ ! -d $homedir ]
-      then
+    if [ ! -d $homedir ]; then
       echo "New users home dir created as well @ $homedir"
     fi
  else
@@ -143,27 +143,17 @@ if [ $? -eq 0 ]; then
  exit 4
 fi
 
-echo "next step installing the masternode binary in 10 seconds"
-sleep 5
-echo "4"
-sleep 1
-echo "3"
-sleep 1
-echo "2"
-sleep 1
-echo "1"
-sleep 1
+echo $SECTION_SEPARATOR
+echo
 
 ############# grab the node binary and chmod ############################
-#########################################################################
-###if we got this far then the user exists, we will store the binary as a system file
 ###the chain will end up being stored on this users home dir, at /home/username/.pirl/
-##make sure its not running if for reason the service is already there, do clean up
-## incase it was run again  for some reason
 
+##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
+echo "Stopping pirlnode, if it is running."
 systemctl stop pirlnode 2>/dev/null 1>/dev/null
-if [ -e /usr/local/bin/pirl-linux-amd6 ]
-  then
+if [ -e /usr/local/bin/pirl-linux-amd6 ]; then
+  echo "Cleaning up previous PIRL installation."
   rm -f /usr/local/bin/pirl-linux-amd64 2>/dev/null
 fi
 #get pirl node
@@ -174,30 +164,17 @@ chmod 0755 /usr/local/bin/pirl-linux-amd64
 chmodresult=$?
 
 #double check download and perms
-if [ "$downloadresult" -ne "0" ] || [ "$chmodresult" -ne "0" ]
-  then
+if [ "$downloadresult" != "0" ] || [ "$chmodresult" != "0" ]; then
   echo "error happened downloading the node from http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64"
   echo "or trying to chmod it to 0755 at location /usr/local/bin/pirl-linux-amd64"
   exit 6
 fi
 
-#check the files md5sum to make sure it was not corrupted in transit
-#pending md5file creation on repo
-
-echo "next step updating or installing systemd service in 10 seconds"
-sleep 5
-echo "4"
-sleep 1
-echo "3"
-sleep 1
-echo "2"
-sleep 1
-echo "1"
-sleep 1
-
+echo $SECTION_SEPARATOR
+echo
 
 ############ populate files for systemd service #########
-#########################################################
+echo "Create systemd unit file, install, and start."
 echo "[Unit]
 Description=Pirl Master Node
 
@@ -219,10 +196,6 @@ echo "MASTERNODE=\"$MASTERNODE\"
 TOKEN=\"$TOKEN\"
 ">/etc/pirlnode-env
 
-#setup a little link for monitoring to be an easier command
-echo "journalctl -f -u pirlnode">/usr/local/bin/monitor
-chmod 0755 /usr/local/bin/monitor
-
 ###reload in case it was there before, and now could be changed
 systemctl daemon-reload
 
@@ -232,35 +205,18 @@ systemctl enable pirlnode
 ###start the node
 systemctl start pirlnode
 
-#echo -e "\n\n can monitor with journalctl --unit=pirlnode -f \n\n"
-
-echo "next step updating packages for operating system in 10 seconds"
-sleep 5
-echo "4"
-sleep 1
-echo "3"
-sleep 1
-echo "2"
-sleep 1
-echo "1"
-sleep 1
-
-clear
-echo this will take a few minutes
-sleep 4
+echo $SECTION_SEPARATOR
+echo
+echo "Updating/Installing packages.  This will take a few minutes."
 
 ############## update packages ###################
-##################################################
 apt-get update
 apt-get dist-upgrade -y
 apt-get install ufw -y
 apt-get install fail2ban -y
 
-
 ############## update ssh port ###################
-##################################################
-if [ "$CHANGESSH" -eq "1" ]
-  then
+if [ "$CHANGESSH" = "1" ]; then
   #comment out old port
    sed -i "s@Port@#Port@" /etc/ssh/sshd_config
   #add new port to bottom
@@ -271,33 +227,21 @@ if [ "$CHANGESSH" -eq "1" ]
   echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
 fi
 
+echo $SECTION_SEPARATOR
+echo
 
-
-echo "next step setting up firewall in 10 seconds"
-sleep 5
-echo "4"
-sleep 1
-echo "3"
-sleep 1
-echo "2"
-sleep 1
-echo "1"
-sleep 1
 ################## setup firewall #################
-###################################################
 #enable fail2ban
 systemctl enable fail2ban
 systemctl start fail2ban
 
-
 #firewall rules
 systemctl enable ufw
-if [ "$FIREWALLIP_OK" = "1" ]
-  then
+if [ "$FIREWALLIP_OK" = "1" ]; then
   ufw allow from $YOURIP
 else
-#port for ssh opened if user does not have static ip at home.
-ufw allow $SSHD_PORT/tcp
+  #port for ssh opened if user does not have static ip at home.
+  ufw allow $SSHD_PORT/tcp
 fi
 
 #default ports for pirlnode
@@ -311,17 +255,16 @@ ufw default allow outgoing
 ufw default deny incoming
 ufw enable
 
-clear
 #show the status
 ufw status
 
-
+echo $SECTION_SEPARATOR
+echo
 echo "all done!"
-echo ""
-echo ""
+echo
 echo "commands you can run now:"
-echo "firewall status command = ufw status"
-echo "service status  command = systemctl status pirlnode"
-echo "service logs    command = journalctl -f -u pirlnode  -or-  monitor"
+echo "Check firewall status with: 'ufw status'"
+echo "Check PIRL status with: 'systemctl status pirlnode'"
+echo "Watch PIRL system logs with: 'journalctl -f -u pirlnode'"
 
 exit 0
