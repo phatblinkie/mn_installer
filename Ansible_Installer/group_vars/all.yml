@@ -7,3 +7,5 @@ packages:
   - fail2ban
   - python3
   - python3-pip
+
+pirl_mn_binary_url: "http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64"

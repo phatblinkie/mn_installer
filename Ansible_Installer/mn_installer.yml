@@ -32,4 +32,4 @@
     - name: INSTALL PIRL MASTERNODE BINARY
       include_role:
         name: pirl_mn
-      when: "{{ MASTERNODE }} and {{ TOKEN }}"
+      when: "(length({{ MASTERNODE }}) == 36) and (length({{ TOKEN }}) == 40)"
