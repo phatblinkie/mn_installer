@@ -24,10 +24,10 @@
         name: "{{RUNAS_USER}}"
         state: present
 
-    - name: SET UP UFW
+    - name: UFW
       include_role:
         name: ufw
 
-    - name: INSTALL PIRL MASTERNODE BINARY
+    - name: PIRL MASTERNODE
       include_role:
         name: pirl_mn
