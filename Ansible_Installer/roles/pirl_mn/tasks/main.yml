@@ -12,7 +12,7 @@
 
 - name: DOWNLOAD PIRL MASTERNODE BINARY
   get_url:
-    url: {{pirl_mn_binary_url}}
+    url: "{{pirl_mn_binary_url}}"
     dest: /usr/local/bin/pirl-linux-amd64
     mode: 0755
 
@@ -20,16 +20,16 @@
   template:
     src: templates/pirlnode-env.j2
     dest: /etc/pirlnode-env
-    owner: {{ RUNAS_USER }}
-    group: {{ RUNAS_USER }}
+    owner: "{{ RUNAS_USER }}"
+    group: "{{ RUNAS_USER }}"
     mode: 0644
 
 - name: CONFIGURE SYSTEMD FOR PIRL BINARY
   template:
     src: templates/unit_file.j2
     dest: /etc/systemd/system/pirlnode.service
-    owner: {{ RUNAS_USER }}
-    group: {{ RUNAS_USER }}
+    owner: "{{ RUNAS_USER }}"
+    group: "{{ RUNAS_USER }}"
     mode: 0755
 
 - name: RELOAD SYSTEMD
