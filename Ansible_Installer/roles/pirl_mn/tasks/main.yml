@@ -8,7 +8,7 @@
   systemd:
     name: pirlnode.service
     state: stopped
-  when: pirl_systemd_file.exists == True
+  when: pirl_systemd_file.stat.exists == True
 
 - name: DOWNLOAD PIRL MASTERNODE BINARY
   get_url:
