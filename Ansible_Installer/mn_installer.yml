@@ -16,7 +16,7 @@
 
     - name: INSTALL REQUIRED PYTHON MODULES
       pip:
-        requirements: requirements.txt
+        requirements: "{{ inventory_dir }}/requirements.txt"
 
   tasks:
     - name: CONFIGURE USER FOR PIRL MASTERNODE SERVICE

@@ -10,7 +10,7 @@
 - name: CONFIGURE UFW TCP PORTS
   ufw:
     rule: allow
-    proto: udp
+    proto: tcp
     port: "{{ item }}"
   with_items:
     - 30303
