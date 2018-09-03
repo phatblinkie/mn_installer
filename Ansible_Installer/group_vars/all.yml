@@ -5,6 +5,8 @@ packages:
   - ansible
   - ufw
   - fail2ban
+  - python
+  - python-pip
   - python3
   - python3-pip
 

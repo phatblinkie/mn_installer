@@ -23,7 +23,6 @@
       user:
         name: "{{RUNAS_USER}}"
         state: present
-        shell: /usr/sbin/nologin
 
     - name: SET UP UFW
       include_role:
