@@ -1,4 +1,15 @@
 ---
+- name: CHECK EXISTENCE OF PREVIOUS PIRL MASTERNODE INSTALLATION
+  stat:
+    path: /etc/systemd/system/pirlnode.service
+  register: pirl_systemd_file
+
+- name: STOP EXISTING PIRL MASTERNODE
+  systemd:
+    name: pirlnode.service
+    state: stopped
+  when: pirl_systemd_file.exists == True
+
 - name: DOWNLOAD PIRL MASTERNODE BINARY
   get_url:
     url: {{pirl_mn_binary_url}}
