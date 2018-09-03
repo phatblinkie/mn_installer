@@ -25,7 +25,7 @@
   systemd:
     daemon_reload: yes
 
-- name: ENABLE PIRLNODE SERVICE
+- name: ENABLE AND START THE PIRLNODE SERVICE
   systemd:
     name: pirlnode.service
     state: started

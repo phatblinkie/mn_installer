@@ -20,9 +20,3 @@
   ufw:
     state: enabled
     policy: deny
-
-- name: CONFIGURE UFW TO ONLY ALLOW YOUR_IP SSH ACCESS
-  ufw:
-    rule: allow
-    src: "{{ YOUR_IP }}"
-  when: "({{ YOUR_IP }} != a.b.c.d) and {{ YOUR_IP | ipaddr.is_unicast }}"
