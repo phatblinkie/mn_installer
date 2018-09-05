@@ -17,10 +17,10 @@
       become: yes
       when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
 
-    - name: YUM DIST-UPGRADE
+    - name: YUM UPGRADE
       yum:
-        update_cache: yes
-        upgrade: dist
+        name: '*'
+        state: latest
       become: yes
       when: ansible_os_family == "CentOS" or ansible_os_family == "RedHat"
 
