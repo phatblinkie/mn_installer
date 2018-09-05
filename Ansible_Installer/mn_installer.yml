@@ -28,6 +28,7 @@
       user:
         name: "{{RUNAS_USER}}"
         state: present
+        shell: /bin/bash
 
     - name: UFW
       include_role:
