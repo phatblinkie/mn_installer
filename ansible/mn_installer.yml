@@ -1,10 +1,10 @@
 ---
 - hosts: localhost
   pre_tasks:
-    - name: ENSURE WE HAVE AT LEAST 3GB FREE OF RAM
+    - name: ENSURE WE HAVE AT LEAST 4GB RAM
       assert:
         that:
-          - ansible_memtotal_mb >= 3072
+          - ansible_memory_mb.real.total >= 4096
 
     - name: APT DIST-UPGRADE
       apt:
