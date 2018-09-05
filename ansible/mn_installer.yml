@@ -13,7 +13,7 @@
       become: yes
       when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
 
-    - name: APT DIST-UPGRADE
+    - name: YUM DIST-UPGRADE
       yum:
         update_cache: yes
         upgrade: dist
