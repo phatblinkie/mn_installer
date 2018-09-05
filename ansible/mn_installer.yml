@@ -1,18 +1,13 @@
 ---
 - hosts: localhost
   pre_tasks:
-    - name: GET REAL RAM AMOUNT
-      shell: grep MemTotal /proc/meminfo |  sed 's/[^0-9]*//g'
-      register: total_ram
+    - name: RAM CHECK
+      include_role:
+        name: ram_check
 
-    - name: OUTPUT RAM AMOUNT
-      debug:
-        msg: "Your total ram is: {{ total_ram.stdout }}"
-
-    - name: ENSURE WE HAVE AT LEAST 4GB RAM
-      assert:
-        that:
-          - "{{ total_ram.stdout }} >= 4000000"
+    - name: TOKEN AND MASTERNODE CHECK
+      include_role:
+        name: token_masternode_check
 
     - name: APT DIST-UPGRADE
       apt:
