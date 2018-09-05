@@ -4,7 +4,7 @@
     - name: ENSURE WE HAVE AT LEAST 4GB OF RAM
       assert:
         that:
-          - ansible_memtotal_mb >= 4096
+          - ansible_memtotal_mb >= 4090
 
     - name: APT DIST-UPGRADE
       apt:
