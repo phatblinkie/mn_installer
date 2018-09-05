@@ -13,4 +13,4 @@
 - name: ATTEMPT TO VALIDATE PROPER VALUE FOR 'MASTERNODE'
   assert:
     that:
-      - "{{ TOKEN|length }} == 36"
+      - "{{ MASTERNODE|length }} == 36"
