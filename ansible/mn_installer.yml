@@ -12,7 +12,7 @@
     - name: ENSURE WE HAVE AT LEAST 4GB RAM
       assert:
         that:
-          - "{{ total_ram.stdout }} >= 4039664"
+          - "{{ total_ram.stdout }} >= 4000000"
 
     - name: APT DIST-UPGRADE
       apt:
