@@ -1,6 +1,11 @@
 ---
 - hosts: localhost
   pre_tasks:
+    - name: ENSURE WE HAVE AT LEAST 4GB OF RAM
+      assert:
+        that:
+          - ansible_memtotal_mb >= 4096
+
     - name: APT DIST-UPGRADE
       apt:
         update_cache: yes
