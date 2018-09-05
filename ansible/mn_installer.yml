@@ -9,30 +9,9 @@
       include_role:
         name: token_masternode_check
 
-    - name: APT DIST-UPGRADE
-      apt:
-        update_cache: yes
-        upgrade: dist
-      become: yes
-      when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
-
-    - name: YUM UPGRADE
-      yum:
-        name: '*'
-        state: latest
-      become: yes
-      when: ansible_os_family == "CentOS" or ansible_os_family == "RedHat"
-
-    - name: INSTALL REQUIRED PACKAGES
-      package:
-        name: "{{ item }}"
-        state: latest
-      become: yes
-      with_items: "{{ packages }}"
-
-    - name: INSTALL REQUIRED PYTHON MODULES
-      pip:
-        requirements: "{{ inventory_dir }}/requirements.txt"
+    - name: UPDATE OS AND INSTALL REQUIRED PACKAGES AND MODULES
+      include_role:
+        name: install_packages
 
   tasks:
     - name: CONFIGURE USER FOR PIRL MASTERNODE SERVICE
