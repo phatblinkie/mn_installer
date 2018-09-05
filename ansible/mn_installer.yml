@@ -5,10 +5,14 @@
       shell: grep MemTotal /proc/meminfo |  sed 's/[^0-9]*//g'
       register: total_ram
 
+    - name: OUTPUT RAM AMOUNT
+      debug:
+        msg: "Your total ram is: {{ total_ram.stdout }}"
+
     - name: ENSURE WE HAVE AT LEAST 4GB RAM
       assert:
         that:
-          - total_ram >= 4039664
+          - "{{ total_ram.stdout }} >= 4039664"
 
     - name: APT DIST-UPGRADE
       apt:
