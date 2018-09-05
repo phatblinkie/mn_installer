@@ -11,9 +11,17 @@
         update_cache: yes
         upgrade: dist
       become: yes
+      when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+
+    - name: APT DIST-UPGRADE
+      yum:
+        update_cache: yes
+        upgrade: dist
+      become: yes
+      when: ansible_os_family == "CentOS" or ansible_os_family == "RedHat"
 
     - name: INSTALL REQUIRED PACKAGES
-      apt:
+      package:
         name: "{{ item }}"
         state: latest
       become: yes
