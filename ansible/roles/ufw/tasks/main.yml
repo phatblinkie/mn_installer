@@ -1,5 +1,5 @@
 ---
-- name: ENABLE UFW
+- name: ENABLE UFW BUT DEFAULT ALLOW
   ufw:
     state: enabled
     policy: allow
@@ -21,7 +21,7 @@
     - 30303
     - 22
 
-- name: ENABLE UFW
+- name: ENABLE UFW BUT DEFAULT DENY
   ufw:
     state: enabled
     policy: deny
