@@ -1,4 +1,9 @@
 ---
+- name: ENABLE UFW
+  ufw:
+    state: enabled
+    policy: allow
+
 - name: CONFIGURE UFW UDP PORTS
   ufw:
     rule: allow
