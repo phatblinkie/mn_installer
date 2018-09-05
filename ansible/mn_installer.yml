@@ -1,10 +1,14 @@
 ---
 - hosts: localhost
   pre_tasks:
-    - name: ENSURE WE HAVE AT LEAST 4GB RAM
-      assert:
-        that:
-          - ansible_memory_mb.real.total >= 4096
+  - name: GET REAL RAM AMOUNT
+      shell: grep MemTotal /proc/meminfo |  sed 's/[^0-9]*//g'
+      register: total_ram
+
+  - name: ENSURE WE HAVE AT LEAST 4GB RAM
+    assert:
+      that:
+      - total_ram >= 4039664
 
     - name: APT DIST-UPGRADE
       apt:
