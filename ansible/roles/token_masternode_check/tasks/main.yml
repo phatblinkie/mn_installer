@@ -2,7 +2,7 @@
 - debug:
     msg: "TOKEN value is currently: '{{ TOKEN }}'"
 
-- name: ATTEMPT TO VALIDATE PROPER VALUE FOR: TOKEN
+- name: ATTEMPT TO VALIDATE PROPER VALUE FOR 'TOKEN'
   assert:
     that:
       - "{{ TOKEN|length }} == 40"
@@ -10,7 +10,7 @@
 - debug:
     msg: "MASTERNODE value is currently: '{{ MASTERNODE }}'"
 
-- name: ATTEMPT TO VALIDATE PROPER VALUE FOR: MASTERNODE
+- name: ATTEMPT TO VALIDATE PROPER VALUE FOR 'MASTERNODE'
   assert:
     that:
       - "{{ TOKEN|length }} == 36"
