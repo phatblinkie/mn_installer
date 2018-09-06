@@ -11,7 +11,7 @@
 
 - name: CONVERT TO BOOLEAN TEST
   debug:
-    msg: multiple_ips
+    msg: "{{ multiple_ips }}"
 
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH MULTIPLE IPs
   debug:
