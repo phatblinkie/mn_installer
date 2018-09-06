@@ -15,8 +15,9 @@ def main():
     sending_proof = ' masternode sending proof of activity for block'
     sending_proof_check = 0
     for entry in j:
-        if onetime_keyitems in entry['MESSAGE']:
-            print("This is good --> {}".format(entry['MESSAGE']))
+        for item in onetime_keyitems:
+            if item in entry['MESSAGE']:
+                print("This is good --> {}".format(entry['MESSAGE']))
 
         if importing_blocks in entry['MESSAGE'] and importing_blocks_check == 0:
             importing_blocks_check = 1
