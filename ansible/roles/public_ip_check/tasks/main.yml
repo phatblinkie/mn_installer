@@ -17,13 +17,13 @@
   debug:
     msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
   register: ip_validation
-#  when: multiple_ips  True
+  when: multiple_ips > 1
 
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH SINGLE IP
   debug:
     msg: "{{ ansible_all_ipv4_addresses | ipaddr('public') }}"
   register: ip_validation
-  when: multiple_ips == False
+  when: multiple_ips == 1
 
 - name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
