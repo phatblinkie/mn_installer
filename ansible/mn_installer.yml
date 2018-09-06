@@ -1,6 +1,10 @@
 ---
 - hosts: localhost
   pre_tasks:
+    - name: INCLUDE USER SETTINGS
+      include_vars:
+        file: env.cfg
+
     - name: RUN HARDWARE AND CONFIGURATION CHECKS
       include_role:
         name: "{{ item }}"

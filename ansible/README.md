@@ -5,8 +5,9 @@ This installer uses Ansible to configure your system to be a PIRL masternode.
 *  Install Ansible on your machine.
    * Debian/Ubuntu: #`apt install ansible`
    * RedHat/CentOS: #`yum install ansible`
-*  Modify the file *hosts.yml* and fix the *MASTERNODE* and *TOKEN* variables to match your setup.
-*  Optional:  In the hosts.yml file change the RUNAS_USER variable to be which user you'd like the masternode to run as.
+*  Copy the env.cfg-sample to env.cfg.  `cp env.cfg-sample env.cfg`
+*  Modify the file *env.cfg* file and fix the *MASTERNODE* and *TOKEN* variables to match your setup.  `nano env.cfg`
+*  Optional:  In the env.cfg file change the RUNAS_USER variable to be which user you'd like the masternode to run as.
 *  Run the command: `ansible-playbook -K mn_installer.yml` to start the installation.  This might take some time so be patient.
 
 # Troubleshooting
