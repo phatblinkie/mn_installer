@@ -1,13 +1,16 @@
 ---
 - hosts: localhost
   pre_tasks:
-    - name: RAM CHECK
+    - name: RUN HARDWARE AND CONFIGURATION CHECKS
       include_role:
-        name: ram_check
+        name: "{{ item }}"
+      with_items:
+        - ram_check
+        - public_ip_check
+        - token_masternode_check
 
     - name: TOKEN AND MASTERNODE CHECK
       include_role:
-        name: token_masternode_check
 
     - name: UPDATE OS AND INSTALL REQUIRED PACKAGES AND MODULES
       include_role:
