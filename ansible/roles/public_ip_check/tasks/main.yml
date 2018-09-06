@@ -6,7 +6,7 @@
 
 - name: DEBUGGING
   debug:
-    msg: "ip_validation: {{ ip_validation }}"
+    msg: "ip_validation: {{ ip_validation | ipaddr('public') }}"
 
 - name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
