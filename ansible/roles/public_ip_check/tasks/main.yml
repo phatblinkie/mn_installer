@@ -5,18 +5,18 @@
 #  register: ip_count
 
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH MULTIPLE IPs
-  debug:
-    msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
-  register: ip_validation
+  assert:
+    that:
+      - "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
   when: "{{ ansible_all_ipv4_addresses | list | count }} > 1"
 
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH SINGLE IP
-  debug:
-    msg: "{{ ansible_all_ipv4_addresses | ipaddr('public') }}"
-  register: ip_validation
-  when: "{{ ansible_all_ipv4_addresses | list | count }} == 1"
-
-- name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
     that:
-      - "{{ ip_validation }}"
+      - "{{ ansible_all_ipv4_addresses | ipaddr('public') }}"
+  when: "{{ ansible_all_ipv4_addresses | list | count }} == 1"
+
+#- name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
+#  assert:
+#    that:
+#      - "{{ ip_validation }}"
