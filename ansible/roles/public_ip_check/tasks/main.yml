@@ -6,7 +6,7 @@
 
 - name: COUNT IP ADDRESSES
   debug:
-    msg: "{{ ip_addresses['msg'] | length }} > 1"
+    msg: "{{ ip_addresses['msg'] | count }}"
   register: multiple_ips
 
 - name: CONVERT TO BOOLEAN TEST
