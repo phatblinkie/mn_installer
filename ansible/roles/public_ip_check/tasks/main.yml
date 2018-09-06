@@ -1,29 +1,29 @@
 ---
 - name: GATHERING IP ADDRESSES
   debug:
-    msg: "{{ ansible_all_ipv4_addresses | list }}"
-  register: ip_addresses
+    msg: "{{ ansible_all_ipv4_addresses | list | count }}"
+  register: ip_count
 
-- name: COUNT IP ADDRESSES
-  debug:
-    msg: "{{ ip_addresses['msg'] | count }}"
-  register: multiple_ips
+#- name: COUNT IP ADDRESSES
+#  debug:
+#    msg: "{{ ip_addresses['msg'] | count }}"
+#  register: ip_count
 
 - name: CONVERT TO BOOLEAN TEST
   debug:
-    msg: "{{ multiple_ips }}"
+    msg: "{{ ip_count }}"
 
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH MULTIPLE IPs
   debug:
     msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
   register: ip_validation
-  when: multiple_ips > 1
+  when: ip_count > 1
 
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH SINGLE IP
   debug:
     msg: "{{ ansible_all_ipv4_addresses | ipaddr('public') }}"
   register: ip_validation
-  when: multiple_ips == 1
+  when: ip_count == 1
 
 - name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
