@@ -7,6 +7,14 @@
     group: root
     mode: 0644
 
+- name: CONFIGURE CONFIG
+  copy:
+    src: templates/jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: 0644
+
 - name: RESTART FAIL2BAN
   systemd:
     name: fail2ban
