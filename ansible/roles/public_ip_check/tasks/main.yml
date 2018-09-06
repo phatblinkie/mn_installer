@@ -1,14 +1,10 @@
 ---
-- name: DEBUGGING
+- name: COLLECT PRIMARY IP ADDRESS OF MACHINE
   debug:
     msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr() }}"
   register: ip_validation
 
-- name: DEBUGGING
-  debug:
-    msg: "ip_validation: {{ ip_validation | ipaddr('public') }}"
-
 - name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
     that:
-      - "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
+      - "ip_validation: {{ ip_validation | ipaddr('public') }}"
