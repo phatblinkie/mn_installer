@@ -4,10 +4,6 @@
     msg: "{{ ansible_all_ipv4_addresses | list }}"
   register: ip_addresses
 
-- name: TROUBLESHOOTING
-  debug:
-    msg: "{{ ip_addresses['msg'] | length }}"
-
 - name: COLLECT PRIMARY IP ADDRESS OF MACHINE --> MULTIPLE IP
   debug:
     msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
