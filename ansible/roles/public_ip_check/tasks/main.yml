@@ -15,7 +15,7 @@
 
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH MULTIPLE IPs
   debug:
-    msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
+    msg: "{{ ansible_all_ipv4_addresses | list | ipaddr('public') }}"
   register: ip_validation
   when: ip_count > 1
 
