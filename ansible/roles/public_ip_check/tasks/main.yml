@@ -1,4 +1,12 @@
 ---
+- name: DEBUGGING
+  debug:
+    msg: "IPv4 Address {{ ansible_all_ipv4_addresses[0] }}"
+
+- name: DEBUGGING
+  debug:
+    msg: "Test if public: {{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
+
 - name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
     that:
