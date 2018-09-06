@@ -8,13 +8,13 @@
   debug:
     msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
   register: ip_validation
-  when: {{ ip_count }} >= 2
+  when: ip_count is not 1
 
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH SINGLE IP
   debug:
     msg: "{{ ansible_all_ipv4_addresses | ipaddr('public') }}"
   register: ip_validation
-  when: {{ ip_count }} == 1
+  when: ip_count is 1
 
 - name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
