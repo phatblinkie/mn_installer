@@ -9,11 +9,15 @@
     msg: "{{ ip_addresses['msg'] | length }} > 1"
   register: multiple_ips
 
+- name: CONVERT TO BOOLEAN TEST
+  debug:
+    msg: multiple_ips
+
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH MULTIPLE IPs
   debug:
     msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
   register: ip_validation
-  when: multiple_ips == True
+#  when: multiple_ips  True
 
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH SINGLE IP
   debug:
