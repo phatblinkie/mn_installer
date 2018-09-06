@@ -1,7 +1,7 @@
 ---
 - name: COLLECT PRIMARY IP ADDRESS OF MACHINE
   debug:
-    msg: "{{ ansible_all_ipv4_addresses | ipaddr() | first }}"
+    msg: "{{ ansible_all_ipv4_addresses | ipaddr() | first | str }}"
   register: ip_validation
 
 - name: SHOW IP BEING TESTED
