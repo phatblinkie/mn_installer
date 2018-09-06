@@ -1,17 +1,18 @@
 ---
 - name: DEBUGGING
   debug:
-    msg: "IPv4 Address {{ ansible_all_ipv4_addresses[0] }}"
+    msg: "IPv4 Address {{ ansible_all_ipv4_addresses }}"
 
 - name: DEBUGGING
   debug:
-    msg: "Test if public: {{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
+    msg: "{{ ansible_all_ipv4_addresses | ipaddr('public') }}"
+  register: ip_validation
 
 - name: DEBUGGING
   debug:
-    msg: "Test if private: {{ ansible_all_ipv4_addresses[0] | ipaddr('private') }}"
+    msg: "ip_validation: {{ ip_validation }}"
 
 - name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
     that:
-      - "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
+      - "{{ ansible_all_ipv4_addresses | ipaddr('public') }}"
