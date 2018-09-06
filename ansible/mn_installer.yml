@@ -4,10 +4,10 @@
     - name: RUN HARDWARE AND CONFIGURATION CHECKS
       include_role:
         name: "{{ item }}"
-        loop:
-          - ram_check
-          - public_ip_check
-          - token_masternode_check
+      with_items:
+        - 'ram_check'
+        - 'public_ip_check'
+        - 'token_masternode_check'
 
     - name: TOKEN AND MASTERNODE CHECK
       include_role:
