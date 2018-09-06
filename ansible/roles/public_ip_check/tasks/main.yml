@@ -19,4 +19,4 @@
 - name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
     that:
-      - "{{ ip_validation['msg'] | length }} > 0"
+      - "{{ ip_validation['msg'] | list | count }} > 0"
