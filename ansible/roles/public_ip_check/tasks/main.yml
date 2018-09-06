@@ -12,7 +12,7 @@
 
 - name: COLLECT PRIMARY IP ADDRESS OF MACHINE --> SINGLE IP
   debug:
-    msg: "{{ ansible_all_ipv4_addresses | ipaddr('public') }}"
+    msg: "{{ ip_addresses | ipaddr('public') }}"
   register: ip_validation
 #  when: "{{ ip_addresses['msg'] | length }} == 1"
 
