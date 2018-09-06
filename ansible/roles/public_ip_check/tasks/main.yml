@@ -4,18 +4,9 @@
     msg: "{{ ansible_all_ipv4_addresses | list | count }}"
   register: ip_count
 
-#- name: COUNT IP ADDRESSES
-#  debug:
-#    msg: "{{ ip_addresses['msg'] | count }}"
-#  register: ip_count
-
-- name: CONVERT TO BOOLEAN TEST
-  debug:
-    msg: "{{ ip_count }}"
-
 - name: CHECK PRIMARY IP ADDRESS OF MACHINE WITH MULTIPLE IPs
   debug:
-    msg: "{{ ansible_all_ipv4_addresses | list | ipaddr('public') }}"
+    msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
   register: ip_validation
   when: ip_count > 1
 
