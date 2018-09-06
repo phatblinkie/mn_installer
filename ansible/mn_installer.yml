@@ -20,9 +20,12 @@
         state: present
         shell: /bin/bash
 
-    - name: UFW
+    - name: HARDEN THE MACHINE
       include_role:
-        name: ufw
+        name: "{{ item }}"
+      with_items:
+        - 'ufw'
+        - 'fail2ban'
 
     - name: PIRL MASTERNODE
       include_role:
