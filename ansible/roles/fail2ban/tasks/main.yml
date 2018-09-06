@@ -1,7 +1,7 @@
 ---
 - name: MONITOR SSH
   copy:
-    src: jail_ssh.j2
+    src: templates/jail_ssh.j2
     dest: /etc/fail2ban/jail.d/ssh.conf
     owner: root
     group: root
