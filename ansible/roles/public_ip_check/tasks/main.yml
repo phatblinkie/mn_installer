@@ -1,7 +1,7 @@
 ---
 - name: DEBUGGING
   debug:
-    msg: "{{ ansible_all_ipv4_addresses | ipaddr() }}"
+    msg: "{{ ansible_all_ipv4_addresses[0] | ipaddr() }}"
   register: ip_validation
 
 - name: DEBUGGING
