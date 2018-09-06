@@ -2,4 +2,4 @@
 - name: VALIDATE PRIMARY IP OF MACHINE IS A PUBLIC IP
   assert:
     that:
-      - "{{ ansible_ens18.ipv4.address | ipaddr('public') }}"
+      - "{{ ansible_all_ipv4_addresses[0] | ipaddr('public') }}"
