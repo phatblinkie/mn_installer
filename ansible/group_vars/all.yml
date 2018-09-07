@@ -1,0 +1,11 @@
+---
+packages:
+  - tree
+  - git
+  - ansible
+  - ufw
+  - fail2ban
+  - python
+  - python-pip
+
+pirl_mn_binary_url: "http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64"

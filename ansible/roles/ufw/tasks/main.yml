@@ -1,4 +1,9 @@
 ---
+- name: ENABLE UFW BUT DEFAULT ALLOW
+  ufw:
+    state: enabled
+    policy: allow
+
 - name: CONFIGURE UFW UDP PORTS
   ufw:
     rule: allow
@@ -10,19 +15,13 @@
 - name: CONFIGURE UFW TCP PORTS
   ufw:
     rule: allow
-    proto: udp
+    proto: tcp
     port: "{{ item }}"
   with_items:
     - 30303
     - 22
 
-- name: ENABLE UFW
+- name: ENABLE UFW BUT DEFAULT DENY
   ufw:
     state: enabled
     policy: deny
-
-- name: CONFIGURE UFW TO ONLY ALLOW YOUR_IP SSH ACCESS
-  ufw:
-    rule: allow
-    src: "{{ YOUR_IP }}"
-  when: "({{ YOUR_IP }} != a.b.c.d) and {{ YOUR_IP | ipaddr.is_unicast }}"

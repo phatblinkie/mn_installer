@@ -1,0 +1,10 @@
+---
+- name: COLLECT IP ADDRESS OF MACHINE
+  debug:
+    msg: "{{ ansible_all_ipv4_addresses | ipaddr('public') }}"
+  register: ip_validation
+
+- name: VALIDATE IP OF MACHINE IS A PUBLIC IP
+  assert:
+    that:
+      - "{{ ip_validation['msg'] | length }} > 0"
