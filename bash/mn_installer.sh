@@ -210,10 +210,39 @@ echo
 echo "Updating/Installing packages.  This will take a few minutes."
 
 ############## update packages ###################
+#determine if apt, apt-get or yum
+which apt >/dev/null 2>/dev/null
+isapt=$?
+which yum >/dev/null 2>/dev/null
+isyum=$?
+which apt-get >/dev/null 2>/dev/null
+isaptget=$?
+
+if [ "$isapt" -eq "0" ]
+then 
+apt update
+apt full-upgrade -y
+apt install ufw -y
+apt install fail2ban -y
+fi
+
+if [ "$isaptget" -eq "0" ]
+then
 apt-get update
 apt-get dist-upgrade -y
 apt-get install ufw -y
 apt-get install fail2ban -y
+fi
+
+if [ "$isyum" -eq "0" ]
+then
+yum install -y epel-release
+yum update -y
+yum install ufw -y
+yum install fail2ban -y
+fi
+
+
 
 ############## update ssh port ###################
 if [ "$CHANGESSH" = "1" ]; then
@@ -222,8 +251,8 @@ if [ "$CHANGESSH" = "1" ]; then
   #add new port to bottom
   echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
   #restart ssh
-  systemctl restart ssh
-
+  systemctl restart ssh 2>/dev/null
+  systemctl restart sshd 2>/dev/null
   echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
 fi
 
@@ -241,20 +270,21 @@ if [ "$FIREWALLIP_OK" = "1" ]; then
   ufw allow from $YOURIP
 else
   #port for ssh opened if user does not have static ip at home.
-  ufw allow $SSHD_PORT/tcp
+  ufw allow $SSHD_PORT
 fi
 
 #default ports for pirlnode
-ufw allow 30303/tcp
-ufw allow 30303/udp
+ufw allow 30303
 
 #allow all outgoing
 ufw default allow outgoing
 
 #block everything else incoming
-ufw default deny incoming
-ufw enable
+echo "y" | ufw default deny incoming
+sleep 1
+echo "y" | ufw enable
 
+clear
 #show the status
 ufw status
 
