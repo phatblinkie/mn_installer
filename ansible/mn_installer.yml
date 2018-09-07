@@ -26,10 +26,7 @@
 
     - name: HARDEN THE MACHINE
       include_role:
-        name: "{{ item }}"
-      with_items:
-        - 'ufw'
-        - 'fail2ban'
+        name: ufw
 
     - name: PIRL MASTERNODE
       include_role:
