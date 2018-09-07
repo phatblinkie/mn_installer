@@ -1,0 +1,9 @@
+---
+packages:
+  - tree
+  - git
+  - ansible
+  - ufw
+  - fail2ban
+  - python3
+  - python3-pip
