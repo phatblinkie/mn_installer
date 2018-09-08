@@ -145,6 +145,42 @@ if [ $? -eq 0 ]; then
  exit 4
 fi
 
+
+echo $SECTION_SEPARATOR
+echo
+echo "Updating/Installing packages.  This will take a few minutes."
+
+############## update packages ###################
+#determine if apt, apt-get or yum
+which apt >/dev/null 2>/dev/null
+isapt=$?
+which yum >/dev/null 2>/dev/null
+isyum=$?
+which apt-get >/dev/null 2>/dev/null
+isaptget=$?
+
+if [ "$isapt" -eq "0" ]
+then
+apt update
+apt full-upgrade -y
+apt install ufw fail2ban wget setools policycoreutils-python -y
+fi
+
+if [ "$isaptget" -eq "0" ]
+then
+apt-get update
+apt-get dist-upgrade -y
+apt-get install ufw fail2ban wget setools policycoreutils-python  -y
+fi
+
+if [ "$isyum" -eq "0" ]
+then
+yum install -y epel-release
+yum update -y
+yum install ufw fail2ban wget setools policycoreutils-python -y
+fi
+
+
 echo $SECTION_SEPARATOR
 echo
 
@@ -206,46 +242,6 @@ systemctl enable pirlnode
 
 ###start the node
 systemctl start pirlnode
-
-echo $SECTION_SEPARATOR
-echo
-echo "Updating/Installing packages.  This will take a few minutes."
-
-############## update packages ###################
-#determine if apt, apt-get or yum
-which apt >/dev/null 2>/dev/null
-isapt=$?
-which yum >/dev/null 2>/dev/null
-isyum=$?
-which apt-get >/dev/null 2>/dev/null
-isaptget=$?
-
-if [ "$isapt" -eq "0" ]
-then 
-apt update
-apt full-upgrade -y
-apt install ufw -y
-apt install fail2ban -y
-apt install setools policycoreutils-python -y
-fi
-
-if [ "$isaptget" -eq "0" ]
-then
-apt-get update
-apt-get dist-upgrade -y
-apt-get install ufw -y
-apt-get install fail2ban -y
-apt-get install setools policycoreutils-python -y
-fi
-
-if [ "$isyum" -eq "0" ]
-then
-yum install -y epel-release
-yum update -y
-yum install ufw -y
-yum install fail2ban -y
-yum install setools policycoreutils-python -y
-fi
 
 
 
