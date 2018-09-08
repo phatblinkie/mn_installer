@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#
+/usr/bin/env bash
 
 SECTION_SEPARATOR="#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#"
 
@@ -288,9 +289,7 @@ systemctl start fail2ban
 
 #firewall rules
 systemctl enable ufw
-echo "y" | ufw enable
-#twice for the hell of it apparently, it doesnt like to start with a command when you tell it
-echo "y" | ufw enable
+echo "y" | ufw enable >/dev/null 2>/dev/null 
 
 
 if [ "$FIREWALLIP_OK" = "1" ]; then
@@ -309,7 +308,6 @@ ufw default allow outgoing
 #block everything else incoming
 echo "y" | ufw default deny incoming
 sleep 1
-echo "y" | ufw enable
 
 clear
 #show the status
