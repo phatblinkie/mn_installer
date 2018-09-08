@@ -292,6 +292,11 @@ systemctl start fail2ban
 
 #firewall rules
 systemctl enable ufw
+echo "y" | ufw enable
+#twice for the hell of it apparently, it doesnt like to start with a command when you tell it
+echo "y" | ufw enable
+
+
 if [ "$FIREWALLIP_OK" = "1" ]; then
   ufw allow from $YOURIP
 else
