@@ -224,6 +224,7 @@ apt update
 apt full-upgrade -y
 apt install ufw -y
 apt install fail2ban -y
+apt install setools policycoreutils-python -y
 fi
 
 if [ "$isaptget" -eq "0" ]
@@ -232,6 +233,7 @@ apt-get update
 apt-get dist-upgrade -y
 apt-get install ufw -y
 apt-get install fail2ban -y
+apt-get install setools policycoreutils-python -y
 fi
 
 if [ "$isyum" -eq "0" ]
@@ -240,20 +242,42 @@ yum install -y epel-release
 yum update -y
 yum install ufw -y
 yum install fail2ban -y
+yum install setools policycoreutils-python -y
 fi
 
 
 
 ############## update ssh port ###################
 if [ "$CHANGESSH" = "1" ]; then
-  #comment out old port
-   sed -i "s@Port@#Port@" /etc/ssh/sshd_config
-  #add new port to bottom
-  echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
-  #restart ssh
-  systemctl restart ssh 2>/dev/null
-  systemctl restart sshd 2>/dev/null
-  echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
+#look if selinux is on or not, fake the result if it is not
+
+ if [ `getenforce` = "Enforcing" ]
+  then
+  echo "SElinux appears to be on, good for you."
+  echo "updating ssh context to port $SSHD_PORT"
+  semanage port -a -t ssh_port_t -p tcp $SSHD_PORT
+  selinuxenabled = $?
+   #small sanity check
+  if [ "$selinuxenabled" -eq "0" ]
+    then
+    #comment out old port
+     sed -i "s@Port@#Port@" /etc/ssh/sshd_config
+     #add new port to bottom
+     echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
+     systemctl restart ssh 2>/dev/null
+     systemctl restart sshd 2>/dev/null
+     echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
+  else
+     echo "SElinux not enabled, changing ssh port without bells and whistles"
+     #comment out old port
+     sed -i "s@Port@#Port@" /etc/ssh/sshd_config
+     #add new port to bottom
+     echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
+     systemctl restart ssh 2>/dev/null
+     systemctl restart sshd 2>/dev/null
+     echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
+   fi
+ fi
 fi
 
 echo $SECTION_SEPARATOR
