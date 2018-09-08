@@ -161,16 +161,32 @@ isaptget=$?
 
 if [ "$isapt" -eq "0" ]
 then
+#ubuntu may not have the universe repo turned on, which will make these fail
+	#get codename
+	name=`lsb_release -sc`
+	echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
 apt update
 apt full-upgrade -y
-apt install ufw fail2ban wget setools policycoreutils-python -y
+apt install ufw -y
+apt install fail2ban -y
+apt install wget -y
+apt install setools -y
+apt install policycoreutils-python-utils -y
 fi
 
 if [ "$isaptget" -eq "0" ]
 then
-apt-get update
-apt-get dist-upgrade -y
-apt-get install ufw fail2ban wget setools policycoreutils-python  -y
+        #get codename
+        name=`lsb_release -sc`
+        echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
+apt update
+apt full-upgrade -y
+apt install ufw -y
+apt install fail2ban -y
+apt install wget -y
+apt install setools -y
+apt install policycoreutils-python-utils -y
+
 fi
 
 if [ "$isyum" -eq "0" ]
