@@ -103,9 +103,11 @@ echo $SECTION_SEPARATOR
 #username you want the service to run as, if you want it to run as root, leave root
 #if you want it to run as pirl put in pirl. no spaces allowed, and all lower case please.
 #this user will not be used as a login user, so no password will be set.
-read -p "What username should the PIRL Masternode run as? (root, pirl, or leave blank to run as current user): " RUNAS_USER
+read -p "What username should the PIRL Masternode run as? (root, pirl, or leave blank to run as current user): " TEST_RUNAS_USER
 if [ "$TEST_RUNAS_USER" = "" ]; then
   RUNAS_USER=`logname`
+else
+  RUNAS_USER=$TEST_RUNAS_USER
 fi
 
 #check if username already exists,(if not we will make it later)
@@ -255,8 +257,8 @@ if [ "$CHANGESSH" = "1" ]; then
   then
   echo "SElinux appears to be on, good for you."
   echo "updating ssh context to port $SSHD_PORT"
-  semanage port -a -t ssh_port_t -p tcp $SSHD_PORT
-  selinuxenabled = $?
+  semanage port -a -t ssh_port_t -p tcp "$SSHD_PORT"
+  selinuxenabled=$?
    #small sanity check
   if [ "$selinuxenabled" -eq "0" ]
     then
