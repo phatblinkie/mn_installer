@@ -191,9 +191,15 @@ fi
 
 if [ "$isyum" -eq "0" ]
 then
-yum install -y epel-release
+yum install -y epel-release 
+yum install -y libselinux-utils
+yum install -y ufw
+yum install -y fail2ban
+yum install -y wget
+yum install -y setools
+yum install -y policycoreutils-python
+yum install -y policycoreutils 
 yum update -y
-yum install ufw fail2ban wget setools policycoreutils-python -y
 fi
 
 
@@ -275,13 +281,19 @@ if [ "$CHANGESSH" = "1" ]; then
   if [ "$selinuxenabled" -eq "0" ]
     then
     #comment out old port
+     echo "selinux context modded successfully"
      sed -i "s@Port@#Port@" /etc/ssh/sshd_config
      #add new port to bottom
      echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
      systemctl restart ssh 2>/dev/null
      systemctl restart sshd 2>/dev/null
      echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
-  else
+   else
+     echo "selinux enabled, but unable to mod context, for your own safety, not changing ssh port!"
+      sleep 5
+   fi
+ else 
+     #not enforcing actions
      echo "SElinux not enabled, changing ssh port without bells and whistles"
      #comment out old port
      sed -i "s@Port@#Port@" /etc/ssh/sshd_config
@@ -290,7 +302,6 @@ if [ "$CHANGESSH" = "1" ]; then
      systemctl restart ssh 2>/dev/null
      systemctl restart sshd 2>/dev/null
      echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
-   fi
  fi
 fi
 
