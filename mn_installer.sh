@@ -16,6 +16,7 @@ if [[ -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
 	echo "Leaving MN token as is"
 	echo
  else
+ 	rm -f $ENV_PATH
 	while [ "$MASTERNODE" = "" ]; do
 	  echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
 	  read -p 'Enter MN token:' MASTERNODE
