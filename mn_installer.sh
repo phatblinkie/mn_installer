@@ -2,6 +2,10 @@
 
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
+DOWNLOAD_LINK_PREMIUM="http://storage.gra1.cloud.ovh.net/v1/AUTH_8f059abdcba74107a430604cf1c257bb/masternode/premium/pirl-v5-masternode-premium-beta"
+DOWNLOAD_LINK_MARLIN="http://storage.gra1.cloud.ovh.net/v1/AUTH_8f059abdcba74107a430604cf1c257bb/masternode/premium/marlin-v5-masternode-premium-beta"
+PREMIUM_PATH=/usr/local/bin/pirl-premium-core
+MARLIN_PATH=/usr/local/bin/pirl-premium-marlin
 
 echo $SECTION_SEPARATOR
 
@@ -93,11 +97,6 @@ fi
 
 echo $SECTION_SEPARATOR
 echo
-
-DOWNLOAD_LINK_PREMIUM="http://storage.gra1.cloud.ovh.net/v1/AUTH_8f059abdcba74107a430604cf1c257bb/masternode/premium/pirl-v5-masternode-premium-beta"
-DOWNLOAD_LINK_MARLIN="http://storage.gra1.cloud.ovh.net/v1/AUTH_8f059abdcba74107a430604cf1c257bb/masternode/premium/marlin-v5-masternode-premium-beta"
-PREMIUM_PATH=/usr/local/bin/pirl-premium-core
-MARLIN_PATH=/usr/local/bin/pirl-premium-marlin
 
 ############# grab the node binary and chmod ############################
 ###the chain will end up being stored on this users home dir, at /home/username/.pirl/
