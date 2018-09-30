@@ -10,3 +10,4 @@ This script will install a premium masternode v5-beta for PIRL on stock Ubuntu.
 6. Setup a systemd service named pirlnode, enable it, and start it.
 7. Check out if pirl marlin was initialized before. If not will initialize it.
 8. Setup a systemd service named pirlmarlin, enable it, and start it.
+9. If user wants to change SSH port, install firewall and upgrade system, does it.
