@@ -8,6 +8,7 @@ PREMIUM_PATH=/usr/local/bin/pirl-premium-core
 MARLIN_PATH=/usr/local/bin/pirl-premium-marlin
 
 echo $SECTION_SEPARATOR
+echo
 
 ## https://poseidon.pirl.io/accounts/masternodes-list-private/
 MASTERNODE=""
@@ -33,6 +34,7 @@ if [[ -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
  fi
 
 echo $SECTION_SEPARATOR
+echo
 
 ## https://poseidon.pirl.io/accounts/settings/
 TOKEN=""
@@ -48,6 +50,7 @@ if [ "$MASTERNODE" != "" ]; then
 echo
 
 echo $SECTION_SEPARATOR
+echo
 
 #username you want the service to run as, if you want it to run as root, leave root
 #if you want it to run as pirl put in pirl. no spaces allowed, and all lower case please.
