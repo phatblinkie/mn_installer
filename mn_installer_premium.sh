@@ -274,7 +274,7 @@ while [ "$ASK_FIREWALL" = "y" ]; do
   echo
 done
 
-if [ "$SET_FIREWALL" = "y"]; then
+if [ "$SET_FIREWALL" = "y" ]; then
    ./firewall_installer.sh
 fi
 
@@ -285,7 +285,7 @@ echo "Check PIRL-node status with: 'systemctl status pirlnode'"
 echo "Check PIRL-marlin status with: 'systemctl status pirlmarlin'"
 echo "Watch PIRL-node system logs with: 'journalctl -f -u pirlnode'"
 echo "Watch PIRL-marlin system logs with: 'journalctl -f -u pirlmarlin'"
-if [ "$SET_FIREWALL" = "y"]; then
+if [ "$SET_FIREWALL" = "y" ]; then
    echo "Check firewall status with: 'ufw status'"
 fi
 
