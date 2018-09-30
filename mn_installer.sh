@@ -180,7 +180,7 @@ if [[ -f $ENV_PATH ]]; then
 	echo "MASTERNODE=\"$MASTERNODE\"
 	TOKEN=\"$TOKEN\"
 	">$ENV_PATH
-	echo "Succesfully created $ENV_PATH with new tokens"
+	echo "Successfully created $ENV_PATH with new tokens"
  fi
 
 ###reload in case it was there before, and now could be changed
