@@ -220,6 +220,7 @@ if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	echo "Wait 5 seconds for pirlnode to run"
 	sleep 5
 	$MARLIN_PATH init
+	chown -R $RUNAS_USER:$RUNAS_USER $homedir/.marlin/
 fi
 ###reload in case it was there before, and now could be changed
 systemctl daemon-reload
