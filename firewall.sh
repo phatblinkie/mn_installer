@@ -81,6 +81,23 @@ done
 
 echo $SECTION_SEPARATOR
 echo
+
+#ask if wants to updrage dist
+ASK_DIST_UPGRADE="y"
+while [ "$ASK_DIST_UPGRADE" = "y" ]; do
+  read -p "Would you like to upgrade Linux distributive to latest version? (y/N): " SET_DIST_UPGRADE
+  if [[ "$SET_DIST_UPGRADE" = "y" || "$SET_DIST_UPGRADE" = "Y" ]]; then
+  	SET_DIST_UPGRADE = "y"
+  	ASK_DIST_UPGRADE = "n"
+  else
+    if [[ "$SET_DIST_UPGRADE" = "n" || "$SET_DIST_UPGRADE" = "N" | "$SET_DIST_UPGRADE" = "" ]]; then
+    	SET_DIST_UPGRADE = "n"
+	ASK_DIST_UPGRADE = "n"
+    fi
+  fi
+  echo
+done
+
 echo "Updating/Installing packages.  This will take a few minutes."
 
 ############## update packages ###################
@@ -99,7 +116,9 @@ then
 	name=`lsb_release -sc`
 	echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
 apt update
-apt full-upgrade -y
+if [ "$SET_DIST_UPGRADE" = "y"]; then
+   apt full-upgrade -y
+fi
 apt install ufw -y
 apt install fail2ban -y
 apt install wget -y
@@ -113,7 +132,9 @@ then
         name=`lsb_release -sc`
         echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
 apt-get update
-apt-get full-upgrade -y
+if [ "$SET_DIST_UPGRADE" = "y"]; then
+   apt-get full-upgrade -y
+fi
 apt-get install ufw -y
 apt-get install fail2ban -y
 apt-get install wget -y
