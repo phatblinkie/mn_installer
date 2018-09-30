@@ -47,3 +47,170 @@ fi
 
 echo $SECTION_SEPARATOR
 echo
+
+
+#your home ip address for the firewall to only allow your ip into ssh
+#if you do not have an ip at home that stays the same, leave the below value
+#if left to be a.b.c.d then the script will ignore it
+TEST_IP_ADDRESS=""
+YOURIP=""
+while [ "$TEST_IP_ADDRESS" = "" ] && [ "$YOURIP" = "" ]; do
+  echo "If you wish to limit SSH access to a single IP address enter it here."
+  echo "NOTE:  Setting this will secure your server to ONLY allow SSH from this IP address."
+  echo "DO NOT set this if you don't have a static IP address to source your SSH sessions to this server from!"
+  read -p "Enter in your source IP address.  (Leave blank if you wish to allow from any IP.) IP Address: " TEST_IP_ADDRESS
+### This still doesn't work! ###
+#  if [ $(validateIP $TEST_IP_ADDRESS) -eq 0 ]; then
+#    YOURIP=$TEST_IP_ADDRESS
+#    FIREWALLIP_OK="1"
+#    TEST_IP_ADDRESS=""
+#  elif [ "$TEST_IP_ADDRESS" = "" ]; then
+#    YOURIP="a.b.c.d"
+#  fi
+### Instead do no checking ###
+  if [ "$TEST_IP_ADDRESS" = "" ]; then
+    YOURIP="a.b.c.d"
+    FIREWALLIP_OK="0"
+  else
+    YOURIP=$TEST_IP_ADDRESS
+    FIREWALLIP_OK="1"
+    TEST_IP_ADDRESS=""
+  fi
+  echo
+done
+
+echo $SECTION_SEPARATOR
+echo
+echo "Updating/Installing packages.  This will take a few minutes."
+
+############## update packages ###################
+#determine if apt, apt-get or yum
+which apt >/dev/null 2>/dev/null
+isapt=$?
+which yum >/dev/null 2>/dev/null
+isyum=$?
+which apt-get >/dev/null 2>/dev/null
+isaptget=$?
+
+if [ "$isapt" -eq "0" ]
+then
+#ubuntu may not have the universe repo turned on, which will make these fail
+	#get codename
+	name=`lsb_release -sc`
+	echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
+apt update
+apt full-upgrade -y
+apt install ufw -y
+apt install fail2ban -y
+apt install wget -y
+apt install setools -y
+apt install policycoreutils-python-utils -y
+fi
+
+if [ "$isaptget" -eq "0" ]
+then
+        #get codename
+        name=`lsb_release -sc`
+        echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
+apt-get update
+apt-get full-upgrade -y
+apt-get install ufw -y
+apt-get install fail2ban -y
+apt-get install wget -y
+apt-get install setools -y
+apt-get install policycoreutils-python-utils -y
+
+fi
+
+if [ "$isyum" -eq "0" ]
+then
+yum install -y epel-release 
+yum install -y libselinux-utils
+yum install -y ufw
+yum install -y fail2ban
+yum install -y wget
+yum install -y setools
+yum install -y policycoreutils-python
+yum install -y policycoreutils 
+yum update -y
+fi
+
+
+echo $SECTION_SEPARATOR
+echo
+
+############## update ssh port ###################
+if [ "$CHANGESSH" = "1" ]; then
+#look if selinux is on or not, fake the result if it is not
+
+ if [ `getenforce` = "Enforcing" ]
+  then
+  echo "SElinux appears to be on, good for you."
+  echo "updating ssh context to port $SSHD_PORT"
+  semanage port -a -t ssh_port_t -p tcp "$SSHD_PORT"
+  selinuxenabled=$?
+   #small sanity check
+  if [ "$selinuxenabled" -eq "0" ]
+    then
+    #comment out old port
+     echo "selinux context modded successfully"
+     sed -i "s@Port@#Port@" /etc/ssh/sshd_config
+     #add new port to bottom
+     echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
+     systemctl restart ssh 2>/dev/null
+     systemctl restart sshd 2>/dev/null
+     echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
+   else
+     echo "selinux enabled, but unable to mod context, for your own safety, not changing ssh port!"
+      sleep 5
+   fi
+ else 
+     #not enforcing actions
+     echo "SElinux not enabled, changing ssh port without bells and whistles"
+     #comment out old port
+     sed -i "s@Port@#Port@" /etc/ssh/sshd_config
+     #add new port to bottom
+     echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
+     systemctl restart ssh 2>/dev/null
+     systemctl restart sshd 2>/dev/null
+     echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
+ fi
+fi
+
+echo $SECTION_SEPARATOR
+echo
+
+################## setup firewall #################
+#enable fail2ban
+systemctl enable fail2ban
+systemctl start fail2ban
+
+#firewall rules
+systemctl enable ufw
+echo "y" | ufw enable >/dev/null 2>/dev/null 
+
+
+if [ "$FIREWALLIP_OK" = "1" ]; then
+  ufw allow from $YOURIP
+else
+  #port for ssh opened if user does not have static ip at home.
+  ufw allow $SSHD_PORT
+fi
+
+#default ports for pirlnode
+ufw allow 30303
+
+#allow all outgoing
+ufw default allow outgoing
+
+#block everything else incoming
+echo "y" | ufw default deny incoming
+sleep 1
+
+clear
+#show the status
+ufw status
+
+echo $SECTION_SEPARATOR
+echo
+exit 0
