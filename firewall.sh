@@ -90,7 +90,7 @@ while [ "$ASK_DIST_UPGRADE" = "y" ]; do
   	SET_DIST_UPGRADE = "y"
   	ASK_DIST_UPGRADE = "n"
   else
-    if [[ "$SET_DIST_UPGRADE" = "n" || "$SET_DIST_UPGRADE" = "N" | "$SET_DIST_UPGRADE" = "" ]]; then
+    if [[ "$SET_DIST_UPGRADE" = "n" || "$SET_DIST_UPGRADE" = "N" || "$SET_DIST_UPGRADE" = "" ]]; then
     	SET_DIST_UPGRADE = "n"
 	ASK_DIST_UPGRADE = "n"
     fi
