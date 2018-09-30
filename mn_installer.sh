@@ -217,6 +217,8 @@ WantedBy=default.target
 
 if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	rm -rf $homedir/.marlin/
+	echo "Wait 5 seconds for pirlnode to run"
+	sleep 5
 	$MARLIN_PATH init
 fi
 ###reload in case it was there before, and now could be changed
