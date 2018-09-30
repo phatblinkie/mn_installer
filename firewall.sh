@@ -25,7 +25,7 @@ ASK_SSH='y'
 #DO NOT USE PORT 30303
 while [ "$ASK_SSH" = "y" ]; do
   #clear
-  read -p "Would you like to change SSH server to listen on a non-default port? (y/n): " SET_SSH
+  read -p "Would you like to change SSH server to listen on a non-default port? (y/N): " SET_SSH
   if [ "$SET_SSH" = "y" ]; then
     read -p "What port should SSH server listen on? (Options: 1024-65535 but not 30303): " TEST_SSH_PORT
   fi
