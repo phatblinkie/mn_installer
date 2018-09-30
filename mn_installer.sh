@@ -176,12 +176,10 @@ WantedBy=default.target
 
 if [[ -f $ENV_PATH ]]; then
 	echo "Tokens haven't been changed"
- else
-	echo "MASTERNODE=\"$MASTERNODE\"
-	TOKEN=\"$TOKEN\"
-	">$ENV_PATH
+else
+	echo "MASTERNODE=\"$MASTERNODE\"\nTOKEN=\"$TOKEN\"">$ENV_PATH
 	echo "Successfully created $ENV_PATH with new tokens"
- fi
+fi
 
 ###reload in case it was there before, and now could be changed
 systemctl daemon-reload
@@ -217,10 +215,16 @@ WantedBy=default.target
 
 if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	rm -rf $homedir/.marlin/
-	echo "Wait 5 seconds for pirlnode to run"
+	echo "Wait 5 seconds for pirlnode to run before initializing marlin"
 	sleep 5
-	$MARLIN_PATH init
+	$MARLIN_PATH init > /dev/null
 	chown -R $RUNAS_USER:$RUNAS_USER $homedir/.marlin/
+fi
+if [ -f $homedir/.marlin/config ]; then
+	echo "Pirl marlin successfully initialized"
+ else
+  	echo "Something went wrong with initializing marlin folder"
+	echo "Please run $MARLIN_PATH init manually after installation"
 fi
 ###reload in case it was there before, and now could be changed
 systemctl daemon-reload
