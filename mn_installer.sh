@@ -16,7 +16,9 @@ if [[ -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
 	echo "Leaving MN token as is"
 	echo
  else
- 	if [ ! -f $ENV_PATH ]; then echo "$ENV_PATH file for tokens doesn't exist" fi
+ 	if [ ! -f $ENV_PATH ]; then
+		echo "$ENV_PATH file for tokens doesn't exist"
+	fi
  	rm -f $ENV_PATH
 	while [ "$MASTERNODE" = "" ]; do
 		echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
