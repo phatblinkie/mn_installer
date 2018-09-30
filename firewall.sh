@@ -87,12 +87,12 @@ ASK_DIST_UPGRADE="y"
 while [ "$ASK_DIST_UPGRADE" = "y" ]; do
   read -p "Would you like to upgrade Linux distributive to latest version? (y/N): " SET_DIST_UPGRADE
   if [[ "$SET_DIST_UPGRADE" = "y" || "$SET_DIST_UPGRADE" = "Y" ]]; then
-  	SET_DIST_UPGRADE = "y"
-  	ASK_DIST_UPGRADE = "n"
+  	SET_DIST_UPGRADE="y"
+  	ASK_DIST_UPGRADE="n"
   else
     if [[ "$SET_DIST_UPGRADE" = "n" || "$SET_DIST_UPGRADE" = "N" || "$SET_DIST_UPGRADE" = "" ]]; then
-    	SET_DIST_UPGRADE = "n"
-	ASK_DIST_UPGRADE = "n"
+    	SET_DIST_UPGRADE="n"
+	ASK_DIST_UPGRADE="n"
     fi
   fi
   echo
