@@ -257,6 +257,27 @@ systemctl restart pirlmarlin
 
 echo $SECTION_SEPARATOR
 echo
+
+#ask if wants to install firewall and change ssh
+ASK_FIREWALL="y"
+while [ "$ASK_FIREWALL" = "y" ]; do
+  read -p "Would you like to install and configure firewall and change SSH settings? (y/N): " SET_FIREWALL
+  if [[ "$" = "y" || "$SET_FIREWALL" = "Y" ]]; then
+  	SET_FIREWALL="y"
+  	ASK_FIREWALL="n"
+  else
+    if [[ "$SET_FIREWALL" = "n" || "$SET_FIREWALL" = "N" || "$SET_FIREWALL" = "" ]]; then
+    	SET_FIREWALL="n"
+	ASK_FIREWALL="n"
+    fi
+  fi
+  echo
+done
+
+if [ "$SET_FIREWALL" = "y"]; then
+   ./firewall_installer.sh
+fi
+
 echo "All done!"
 echo
 echo "Commands you can run now:"
@@ -264,5 +285,8 @@ echo "Check PIRL-node status with: 'systemctl status pirlnode'"
 echo "Check PIRL-marlin status with: 'systemctl status pirlmarlin'"
 echo "Watch PIRL-node system logs with: 'journalctl -f -u pirlnode'"
 echo "Watch PIRL-marlin system logs with: 'journalctl -f -u pirlmarlin'"
+if [ "$SET_FIREWALL" = "y"]; then
+   echo "Check firewall status with: 'ufw status'"
+fi
 
 exit 0
