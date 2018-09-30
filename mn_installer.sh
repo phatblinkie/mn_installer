@@ -215,6 +215,10 @@ Restart=always
 WantedBy=default.target
 ">/etc/systemd/system/pirlmarlin.service
 
+if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
+	rm -rf $homedir/.marlin/
+	$MARLIN_PATH init
+fi
 ###reload in case it was there before, and now could be changed
 systemctl daemon-reload
 
