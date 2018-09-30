@@ -241,7 +241,7 @@ if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 		echo "Pirl marlin successfully initialized"
  	else
   		echo "Something went wrong with initializing marlin folder"
-		echo "Please run $MARLIN_PATH init manually after installation"
+		echo "Please run '$MARLIN_PATH init' manually after installation"
 	fi
 fi
 
