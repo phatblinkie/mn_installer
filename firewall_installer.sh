@@ -82,7 +82,7 @@ done
 echo $SECTION_SEPARATOR
 echo
 
-#ask if wants to updrage dist
+#ask if wants to upgrade dist
 ASK_DIST_UPGRADE="y"
 while [ "$ASK_DIST_UPGRADE" = "y" ]; do
   read -p "Would you like to upgrade Linux distributive to latest version? (y/N): " SET_DIST_UPGRADE
