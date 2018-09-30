@@ -217,7 +217,17 @@ WantedBy=default.target
 if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	rm -rf $homedir/.marlin/
 	echo "Wait 5 seconds for pirlnode to run before initializing marlin"
-	sleep 5
+	echo -ne ".\r"
+	sleep 1
+	echo -ne "..\r"
+	sleep 1
+	echo -ne "...\r"
+	sleep 1
+	echo -ne "....\r"
+	sleep 1
+	echo -ne ".....\r"
+	sleep 1
+	echo -ne "\r\033[K"
 	$MARLIN_PATH init 1>/dev/null
 	chown -R $RUNAS_USER:$RUNAS_USER $homedir/.marlin/
 fi
