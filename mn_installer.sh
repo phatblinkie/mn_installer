@@ -177,8 +177,9 @@ WantedBy=default.target
 if [[ -f $ENV_PATH ]]; then
 	echo "Tokens haven't been changed"
 else
-	echo "MASTERNODE=\"$MASTERNODE\"\\nTOKEN=\"$TOKEN\"">$ENV_PATH
-	echo "Successfully created $ENV_PATH with new tokens"
+echo "MASTERNODE=\"$MASTERNODE\"
+TOKEN=\"$TOKEN\"">$ENV_PATH
+echo "Successfully created $ENV_PATH with new tokens"
 fi
 
 ###reload in case it was there before, and now could be changed
