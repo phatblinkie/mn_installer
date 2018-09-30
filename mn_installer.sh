@@ -16,11 +16,12 @@ if [[ -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
 	echo "Leaving MN token as is"
 	echo
  else
+ 	if [ ! -f $ENV_PATH ]; then echo "$ENV_PATH file for tokens doesn't exist" fi
  	rm -f $ENV_PATH
 	while [ "$MASTERNODE" = "" ]; do
-	  echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
-	  read -p 'Enter MN token:' MASTERNODE
-	  echo
+		echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
+		read -p 'Enter MN token:' MASTERNODE
+		echo
 	done
  fi
 
@@ -230,13 +231,15 @@ if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	echo -ne "\r\033[K"
 	$MARLIN_PATH init 1>/dev/null
 	chown -R $RUNAS_USER:$RUNAS_USER $homedir/.marlin/
+	
+	if [ -f $homedir/.marlin/config ]; then
+		echo "Pirl marlin successfully initialized"
+ 	else
+  		echo "Something went wrong with initializing marlin folder"
+		echo "Please run $MARLIN_PATH init manually after installation"
+	fi
 fi
-if [ -f $homedir/.marlin/config ]; then
-	echo "Pirl marlin successfully initialized"
- else
-  	echo "Something went wrong with initializing marlin folder"
-	echo "Please run $MARLIN_PATH init manually after installation"
-fi
+
 ###reload in case it was there before, and now could be changed
 systemctl daemon-reload
 
@@ -249,9 +252,9 @@ systemctl restart pirlmarlin
 
 echo $SECTION_SEPARATOR
 echo
-echo "all done!"
+echo "All done!"
 echo
-echo "commands you can run now:"
+echo "Commands you can run now:"
 echo "Check PIRL-node status with: 'systemctl status pirlnode'"
 echo "Check PIRL-marlin status with: 'systemctl status pirlmarlin'"
 echo "Watch PIRL-node system logs with: 'journalctl -f -u pirlnode'"
