@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/bin/bash
 
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
