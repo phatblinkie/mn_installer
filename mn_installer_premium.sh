@@ -262,7 +262,7 @@ echo
 ASK_FIREWALL="y"
 while [ "$ASK_FIREWALL" = "y" ]; do
   read -p "Would you like to install and configure firewall and change SSH settings? (y/N): " SET_FIREWALL
-  if [[ "$" = "y" || "$SET_FIREWALL" = "Y" ]]; then
+  if [[ "$SET_FIREWALL" = "y" || "$SET_FIREWALL" = "Y" ]]; then
   	SET_FIREWALL="y"
   	ASK_FIREWALL="n"
   else
@@ -275,7 +275,7 @@ while [ "$ASK_FIREWALL" = "y" ]; do
 done
 
 if [ "$SET_FIREWALL" = "y" ]; then
-   ./firewall_installer.sh
+   bash ./firewall_installer.sh
 fi
 
 echo "All done!"
