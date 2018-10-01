@@ -58,6 +58,7 @@ while [ "$TEST_IP_ADDRESS" = "" ] && [ "$YOURIP" = "" ]; do
   echo "If you wish to limit SSH access to a single IP address enter it here."
   echo "NOTE:  Setting this will secure your server to ONLY allow SSH from this IP address."
   echo "DO NOT set this if you don't have a static IP address to source your SSH sessions to this server from!"
+  echo
   read -p "Enter in your source IP address.  (Leave blank if you wish to allow from any IP.) IP Address: " TEST_IP_ADDRESS
 ### This still doesn't work! ###
 #  if [ $(validateIP $TEST_IP_ADDRESS) -eq 0 ]; then
