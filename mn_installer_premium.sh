@@ -14,6 +14,7 @@ echo
 MASTERNODE=""
 echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
 echo "Or leave it blank if you already have it written in $ENV_PATH and want no change"
+echo
 read -p 'Enter MN token:' MASTERNODE
 echo
 
@@ -41,6 +42,7 @@ TOKEN=""
 if [ "$MASTERNODE" != "" ]; then
 	while [ "$TOKEN" = "" ]; do
 	  echo "Copy/Paste in your POSEIDON account's token.  It can be found at https://poseidon.pirl.io/accounts/settings/"
+	  echo
 	  read -p 'Enter TOKEN:' TOKEN
 	  echo
 	done
