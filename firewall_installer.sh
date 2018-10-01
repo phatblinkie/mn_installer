@@ -100,6 +100,12 @@ done
 
 echo "Updating/Installing packages.  This will take a few minutes."
 
+#install which because some distributives can come without it
+
+apt install which -y >/dev/null 2>/dev/null
+apt-get install which -y >/dev/null 2>/dev/null
+yum install -y which >/dev/null 2>/dev/null
+
 ############## update packages ###################
 #determine if apt, apt-get or yum
 which apt >/dev/null 2>/dev/null
