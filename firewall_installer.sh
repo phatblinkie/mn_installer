@@ -160,7 +160,7 @@ yum install -y wget
 yum install -y setools
 yum install -y policycoreutils-python
 yum install -y policycoreutils 
-if [ "$SET_DIST_UPGRADE" = "y"]; then
+if [ "$SET_DIST_UPGRADE" = "y" ]; then
    yum update -y
 fi
 fi
