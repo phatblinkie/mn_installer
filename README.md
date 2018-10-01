@@ -18,7 +18,7 @@ This script will install a premium masternode v5-beta for PIRL on stock Ubuntu.
 3. Optionally update the SSH daemon to run on a non-standard port of your choice.
 
 ## To run this script
-1. Clone this git repository: `git clone https://github.com/phatblinkie/pirl_mn_installer.git`
-2. Change into the newly created directory: `cd pirl_mn_installer`
-3. Run this script via the command: `sudo ./pirl_mn_installer.sh`
+1. Clone this git repository: `git clone https://github.com/phatblinkie/mn_installer.git`
+2. Change into the newly created directory: `cd mn_installer`
+3. Run this script via the command: `sudo ./mn_installer_premium.sh
 
