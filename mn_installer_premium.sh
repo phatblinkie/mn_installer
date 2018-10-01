@@ -234,7 +234,7 @@ if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	echo -ne ".....\r"
 	sleep 1
 	echo -ne "\r\033[K"
-	su -c "$MARLIN_PATH init 1>/dev/null" $RUNAS_USER
+	su -c "$MARLIN_PATH init 1>/dev/null" $RUNAS_USER -s /bin/bash
 	chown -R $RUNAS_USER:$RUNAS_USER $homedir/.marlin/
 	
 	if [ -f $homedir/.marlin/config ]; then
