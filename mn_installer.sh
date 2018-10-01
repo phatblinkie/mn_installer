@@ -1,104 +1,56 @@
-#/usr/bin/env bash
+#!/bin/bash
 
-SECTION_SEPARATOR="#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#"
-
-function validateIP()
- {
-         local ip=$1
-         local stat=1
-         if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-                OIFS=$IFS
-                IFS='.'
-                ip=($ip)
-                IFS=$OIFS
-                [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
-                && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
-                stat=$?
-        fi
-        return $stat
-}
+SECTION_SEPARATOR="========================================="
+ENV_PATH=/etc/pirlnode-env
+DOWNLOAD_LINK_PREMIUM="http://storage.gra1.cloud.ovh.net/v1/AUTH_8f059abdcba74107a430604cf1c257bb/masternode/premium/pirl-v5-masternode-premium-beta"
+DOWNLOAD_LINK_MARLIN="http://storage.gra1.cloud.ovh.net/v1/AUTH_8f059abdcba74107a430604cf1c257bb/masternode/premium/marlin-v5-masternode-premium-beta"
+PREMIUM_PATH=/usr/local/bin/pirl-premium-core
+MARLIN_PATH=/usr/local/bin/pirl-premium-marlin
 
 echo $SECTION_SEPARATOR
+echo
 
 ## https://poseidon.pirl.io/accounts/masternodes-list-private/
 MASTERNODE=""
-while [ "$MASTERNODE" = "" ]; do
-  echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
-  read -p 'Enter MN token:' MASTERNODE
-  echo
-done
+echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
+echo "Or leave it blank if you already have it written in $ENV_PATH and want no change"
+read -p 'Enter MN token:' MASTERNODE
+echo
+
+if [[ -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
+	echo "Leaving MN token as is"
+	echo
+ else
+ 	if [ ! -f $ENV_PATH ]; then
+		echo "$ENV_PATH file for tokens doesn't exist"
+	fi
+	echo
+ 	rm -f $ENV_PATH
+	while [ "$MASTERNODE" = "" ]; do
+		echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
+		read -p 'Enter MN token:' MASTERNODE
+		echo
+	done
+ fi
 
 echo $SECTION_SEPARATOR
+echo
 
 ## https://poseidon.pirl.io/accounts/settings/
 TOKEN=""
-while [ "$TOKEN" = "" ]; do
-  echo "Copy/Paste in your POSEIDON account's token.  It can be found at https://poseidon.pirl.io/accounts/settings/"
-  read -p 'Enter TOKEN:' TOKEN
-  echo
-done
+if [ "$MASTERNODE" != "" ]; then
+	while [ "$TOKEN" = "" ]; do
+	  echo "Copy/Paste in your POSEIDON account's token.  It can be found at https://poseidon.pirl.io/accounts/settings/"
+	  read -p 'Enter TOKEN:' TOKEN
+	  echo
+	done
+ else
+	echo "Leaving POSEIDON token as is"
+ fi
+echo
 
 echo $SECTION_SEPARATOR
-
-###((((( highly recommended you change the port SSH server listens on! ))))))###
-TEST_SSH_PORT=22  #(recommended range is 1025-65535)
-ASK_SSH='y'
-#DO NOT USE PORT 30303
-while [ "$ASK_SSH" = "y" ]; do
-  #clear
-  read -p "Would you like to change SSH server to listen on a non-default port? (y/n): " SET_SSH
-  if [ "$SET_SSH" = "y" ]; then
-    read -p "What port should SSH server listen on? (Options: 1024-65535 but not 30303): " TEST_SSH_PORT
-  fi
-  if [ $TEST_SSH_PORT -eq 22 ] || ([ $TEST_SSH_PORT -ne 30303 ] && [ $TEST_SSH_PORT -gt 1023 ] && [ $TEST_SSH_PORT -lt 65536 ]); then
-    ASK_SSH='n'
-    SSHD_PORT=$TEST_SSH_PORT
-  else
-    echo "SSH cannot run on port 30303, nor be on a port less than 1024, nor be on a port higher than 65535.  Try again."
-    TEST_SSH_PORT=22
-  fi
-  echo
-done
-
-#check sshd port
-CHANGESSH="0"
-if [ "$SSHD_PORT" != "22" ]; then
-  CHANGESSH="1"
-fi
-
-echo $SECTION_SEPARATOR
-
-#your home ip address for the firewall to only allow your ip into ssh
-#if you do not have an ip at home that stays the same, leave the below value
-#if left to be a.b.c.d then the script will ignore it
-TEST_IP_ADDRESS=""
-YOURIP=""
-while [ "$TEST_IP_ADDRESS" = "" ] && [ "$YOURIP" = "" ]; do
-  echo "If you wish to limit SSH access to a single IP address enter it here."
-  echo "NOTE:  Setting this will secure your server to ONLY allow SSH from this IP address."
-  echo "DO NOT set this if you don't have a static IP address to source your SSH sessions to this server from!"
-  read -p "Enter in your source IP address.  (Leave blank if you wish to allow from any IP.) IP Address: " TEST_IP_ADDRESS
-### This still doesn't work! ###
-#  if [ $(validateIP $TEST_IP_ADDRESS) -eq 0 ]; then
-#    YOURIP=$TEST_IP_ADDRESS
-#    FIREWALLIP_OK="1"
-#    TEST_IP_ADDRESS=""
-#  elif [ "$TEST_IP_ADDRESS" = "" ]; then
-#    YOURIP="a.b.c.d"
-#  fi
-### Instead do no checking ###
-  if [ "$TEST_IP_ADDRESS" = "" ]; then
-    YOURIP="a.b.c.d"
-    FIREWALLIP_OK="0"
-  else
-    YOURIP=$TEST_IP_ADDRESS
-    FIREWALLIP_OK="1"
-    TEST_IP_ADDRESS=""
-  fi
-  echo
-done
-
-echo $SECTION_SEPARATOR
+echo
 
 #username you want the service to run as, if you want it to run as root, leave root
 #if you want it to run as pirl put in pirl. no spaces allowed, and all lower case please.
@@ -148,63 +100,6 @@ fi
 
 echo $SECTION_SEPARATOR
 echo
-echo "Updating/Installing packages.  This will take a few minutes."
-
-############## update packages ###################
-#determine if apt, apt-get or yum
-which apt >/dev/null 2>/dev/null
-isapt=$?
-which yum >/dev/null 2>/dev/null
-isyum=$?
-which apt-get >/dev/null 2>/dev/null
-isaptget=$?
-
-if [ "$isapt" -eq "0" ]
-then
-#ubuntu may not have the universe repo turned on, which will make these fail
-	#get codename
-	name=`lsb_release -sc`
-	echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
-apt update
-apt full-upgrade -y
-apt install ufw -y
-apt install fail2ban -y
-apt install wget -y
-apt install setools -y
-apt install policycoreutils-python-utils -y
-fi
-
-if [ "$isaptget" -eq "0" ]
-then
-        #get codename
-        name=`lsb_release -sc`
-        echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
-apt update
-apt full-upgrade -y
-apt install ufw -y
-apt install fail2ban -y
-apt install wget -y
-apt install setools -y
-apt install policycoreutils-python-utils -y
-
-fi
-
-if [ "$isyum" -eq "0" ]
-then
-yum install -y epel-release 
-yum install -y libselinux-utils
-yum install -y ufw
-yum install -y fail2ban
-yum install -y wget
-yum install -y setools
-yum install -y policycoreutils-python
-yum install -y policycoreutils 
-yum update -y
-fi
-
-
-echo $SECTION_SEPARATOR
-echo
 
 ############# grab the node binary and chmod ############################
 ###the chain will end up being stored on this users home dir, at /home/username/.pirl/
@@ -212,21 +107,52 @@ echo
 ##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
 echo "Stopping pirlnode, if it is running."
 systemctl stop pirlnode 2>/dev/null 1>/dev/null
-if [ -e /usr/local/bin/pirl-linux-amd6 ]; then
+if [ -e $PREMIUM_PATH ]; then
   echo "Cleaning up previous PIRL installation."
-  rm -f /usr/local/bin/pirl-linux-amd64 2>/dev/null
+  rm -f $PREMIUM_PATH 2>/dev/null
 fi
 #get pirl node
 echo "downloading latest PIRL Masternode"
-wget -O /usr/local/bin/pirl-linux-amd64 http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64
+wget -O $PREMIUM_PATH $DOWNLOAD_LINK_PREMIUM
 downloadresult=$?
-chmod 0755 /usr/local/bin/pirl-linux-amd64
+chmod 0755 $PREMIUM_PATH
 chmodresult=$?
 
 #double check download and perms
 if [ "$downloadresult" != "0" ] || [ "$chmodresult" != "0" ]; then
-  echo "error happened downloading the node from http://release.pirl.io/downloads/masternode/linux/pirl-linux-amd64"
-  echo "or trying to chmod it to 0755 at location /usr/local/bin/pirl-linux-amd64"
+  echo "error happened downloading the node from"
+  echo $DOWNLOAD_LINK_PREMIUM
+  echo "or trying to chmod it to 0755 at location"
+  echo $PREMIUM_PATH
+  exit 6
+fi
+
+echo $SECTION_SEPARATOR
+echo
+
+############# grab the marlin-node binary and chmod ############################
+###the chain will end up being stored on this users home dir, at /home/username/.pirl/
+
+##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
+echo "Stopping pirlnode, if it is running."
+systemctl stop pirlmarlin 2>/dev/null 1>/dev/null
+if [ -e $MARLIN_PATH ]; then
+  echo "Cleaning up previous PIRL installation."
+  rm -f $MARLIN_PATH 2>/dev/null
+fi
+#get pirl-marlin node
+echo "downloading latest PIRL Marlin"
+wget -O $MARLIN_PATH $DOWNLOAD_LINK_MARLIN
+downloadresult=$?
+chmod 0755 $MARLIN_PATH
+chmodresult=$?
+
+#double check download and perms
+if [ "$downloadresult" != "0" ] || [ "$chmodresult" != "0" ]; then
+  echo "error happened downloading the node from"
+  echo $DOWNLOAD_LINK_MARLIN
+  echo "or trying to chmod it to 0755 at location"
+  echo $MARLIN_PATH
   exit 6
 fi
 
@@ -234,27 +160,33 @@ echo $SECTION_SEPARATOR
 echo
 
 ############ populate files for systemd service #########
-echo "Create systemd unit file, install, and start."
+echo "Create pirl-node systemd unit file, install, and start."
 echo "[Unit]
 Description=Pirl Master Node
+After=network-online.target
+Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/pirlnode-env
+EnvironmentFile=$ENV_PATH
 
 Type=simple
 User=$RUNAS_USER
 Group=$RUNAS_USER
-
-ExecStart=/usr/local/bin/pirl-linux-amd64
+RestartSec=30s
+ExecStart=$PREMIUM_PATH --rpc --ws
 Restart=always
 
 [Install]
 WantedBy=default.target
 ">/etc/systemd/system/pirlnode.service
 
+if [[ -f $ENV_PATH ]]; then
+	echo "Tokens haven't been changed"
+else
 echo "MASTERNODE=\"$MASTERNODE\"
-TOKEN=\"$TOKEN\"
-">/etc/pirlnode-env
+TOKEN=\"$TOKEN\"">$ENV_PATH
+echo "Successfully created $ENV_PATH with new tokens"
+fi
 
 ###reload in case it was there before, and now could be changed
 systemctl daemon-reload
@@ -263,89 +195,98 @@ systemctl daemon-reload
 systemctl enable pirlnode
 
 ###start the node
-systemctl start pirlnode
+systemctl restart pirlnode
 
 
+############ populate files for systemd-marlin service #########
+echo "Create pirl-marlin systemd unit file, install, and start."
+echo "[Unit]
+Description=Pirl Client -- marlin content service
+After=network.target pirlnode.service
+Wants=network.target pirlnode.service
 
-############## update ssh port ###################
-if [ "$CHANGESSH" = "1" ]; then
-#look if selinux is on or not, fake the result if it is not
+[Service]
+EnvironmentFile=$ENV_PATH
 
- if [ `getenforce` = "Enforcing" ]
-  then
-  echo "SElinux appears to be on, good for you."
-  echo "updating ssh context to port $SSHD_PORT"
-  semanage port -a -t ssh_port_t -p tcp "$SSHD_PORT"
-  selinuxenabled=$?
-   #small sanity check
-  if [ "$selinuxenabled" -eq "0" ]
-    then
-    #comment out old port
-     echo "selinux context modded successfully"
-     sed -i "s@Port@#Port@" /etc/ssh/sshd_config
-     #add new port to bottom
-     echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
-     systemctl restart ssh 2>/dev/null
-     systemctl restart sshd 2>/dev/null
-     echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
-   else
-     echo "selinux enabled, but unable to mod context, for your own safety, not changing ssh port!"
-      sleep 5
-   fi
- else 
-     #not enforcing actions
-     echo "SElinux not enabled, changing ssh port without bells and whistles"
-     #comment out old port
-     sed -i "s@Port@#Port@" /etc/ssh/sshd_config
-     #add new port to bottom
-     echo "Port $SSHD_PORT" >> /etc/ssh/sshd_config
-     systemctl restart ssh 2>/dev/null
-     systemctl restart sshd 2>/dev/null
-     echo "ssh daemon is now running on port $SSHD_PORT , use this from now on for ssh"
- fi
+Type=simple
+User=$RUNAS_USER
+Group=$RUNAS_USER
+RestartSec=30s
+ExecStartPre=/bin/sleep 5
+ExecStart=$MARLIN_PATH daemon
+Restart=always
+
+[Install]
+WantedBy=default.target
+">/etc/systemd/system/pirlmarlin.service
+
+if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
+	rm -rf $homedir/.marlin/
+	echo "Wait 5 seconds for pirlnode to run before initializing marlin"
+	echo -ne ".\r"
+	sleep 1
+	echo -ne "..\r"
+	sleep 1
+	echo -ne "...\r"
+	sleep 1
+	echo -ne "....\r"
+	sleep 1
+	echo -ne ".....\r"
+	sleep 1
+	echo -ne "\r\033[K"
+	$MARLIN_PATH init 1>/dev/null
+	chown -R $RUNAS_USER:$RUNAS_USER $homedir/.marlin/
+	
+	if [ -f $homedir/.marlin/config ]; then
+		echo "Pirl marlin successfully initialized"
+ 	else
+  		echo "Something went wrong with initializing marlin folder"
+		echo "Please run '$MARLIN_PATH init' manually after installation"
+	fi
 fi
+
+###reload in case it was there before, and now could be changed
+systemctl daemon-reload
+
+####enable the node
+systemctl enable pirlmarlin
+
+###start the node
+systemctl restart pirlmarlin
+
 
 echo $SECTION_SEPARATOR
 echo
 
-################## setup firewall #################
-#enable fail2ban
-systemctl enable fail2ban
-systemctl start fail2ban
+#ask if wants to install firewall and change ssh
+ASK_FIREWALL="y"
+while [ "$ASK_FIREWALL" = "y" ]; do
+  read -p "Would you like to install and configure firewall and change SSH settings? (y/N): " SET_FIREWALL
+  if [[ "$SET_FIREWALL" = "y" || "$SET_FIREWALL" = "Y" ]]; then
+  	SET_FIREWALL="y"
+  	ASK_FIREWALL="n"
+  else
+    if [[ "$SET_FIREWALL" = "n" || "$SET_FIREWALL" = "N" || "$SET_FIREWALL" = "" ]]; then
+    	SET_FIREWALL="n"
+	ASK_FIREWALL="n"
+    fi
+  fi
+  echo
+done
 
-#firewall rules
-systemctl enable ufw
-echo "y" | ufw enable >/dev/null 2>/dev/null 
-
-
-if [ "$FIREWALLIP_OK" = "1" ]; then
-  ufw allow from $YOURIP
-else
-  #port for ssh opened if user does not have static ip at home.
-  ufw allow $SSHD_PORT
+if [ "$SET_FIREWALL" = "y" ]; then
+   bash ./firewall_installer.sh
 fi
 
-#default ports for pirlnode
-ufw allow 30303
-
-#allow all outgoing
-ufw default allow outgoing
-
-#block everything else incoming
-echo "y" | ufw default deny incoming
-sleep 1
-
-clear
-#show the status
-ufw status
-
-echo $SECTION_SEPARATOR
+echo "All done!"
 echo
-echo "all done!"
-echo
-echo "commands you can run now:"
-echo "Check firewall status with: 'ufw status'"
-echo "Check PIRL status with: 'systemctl status pirlnode'"
-echo "Watch PIRL system logs with: 'journalctl -f -u pirlnode'"
+echo "Commands you can run now:"
+echo "Check PIRL-node status with: 'systemctl status pirlnode'"
+echo "Check PIRL-marlin status with: 'systemctl status pirlmarlin'"
+echo "Watch PIRL-node system logs with: 'journalctl -f -u pirlnode'"
+echo "Watch PIRL-marlin system logs with: 'journalctl -f -u pirlmarlin'"
+if [ "$SET_FIREWALL" = "y" ]; then
+   echo "Check firewall status with: 'ufw status'"
+fi
 
 exit 0
