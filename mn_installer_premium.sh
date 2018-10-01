@@ -21,7 +21,7 @@ if [[ -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
 	echo "Leaving MN token as is"
 	echo
  else
- 	if [ ! -f $ENV_PATH ]; then
+ 	if [[ ! -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
 		echo "$ENV_PATH file for tokens doesn't exist"
 	fi
 	echo
