@@ -106,6 +106,7 @@ echo
 # download wget before pirl installation
 
 if [ ! -f /usr/bin/wget ] ; then
+	echo "Installing wget..."
 	apt install wget -y >/dev/null 2>/dev/null
 	apt-get install wget -y >/dev/null 2>/dev/null
 	yum install -y wget >/dev/null 2>/dev/null
