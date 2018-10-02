@@ -101,11 +101,13 @@ done
 
 echo "Updating/Installing packages.  This will take a few minutes."
 
-#install which because some distributives can come without it
+# install which because some distributives can come without it
 
-apt install which -y >/dev/null 2>/dev/null
-apt-get install which -y >/dev/null 2>/dev/null
-yum install -y which >/dev/null 2>/dev/null
+if [ ! -f /usr/bin/which ] ; then
+	apt install which -y >/dev/null 2>/dev/null
+	apt-get install which -y >/dev/null 2>/dev/null
+	yum install -y which >/dev/null 2>/dev/null
+fi
 
 ############## update packages ###################
 #determine if apt, apt-get or yum
