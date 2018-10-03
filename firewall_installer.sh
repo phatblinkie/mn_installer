@@ -231,6 +231,9 @@ fi
 
 #default ports for pirlnode
 ufw allow 30303
+ufw allow 4001
+ufw allow 6588
+ufw allow 6589
 
 #allow all outgoing
 ufw default allow outgoing
