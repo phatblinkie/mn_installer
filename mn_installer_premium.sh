@@ -103,6 +103,15 @@ fi
 echo $SECTION_SEPARATOR
 echo
 
+# download wget before pirl installation
+
+if [ ! -f /usr/bin/wget ] ; then
+	echo "Installing wget..."
+	apt install wget -y >/dev/null 2>/dev/null
+	apt-get install wget -y >/dev/null 2>/dev/null
+	yum install -y wget >/dev/null 2>/dev/null
+fi
+
 ############# grab the node binary and chmod ############################
 ###the chain will end up being stored on this users home dir, at /home/username/.pirl/
 

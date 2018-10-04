@@ -20,5 +20,5 @@ This script will install a premium masternode v5-beta for PIRL on stock Ubuntu.
 ## To run this script
 1. Clone this git repository: `git clone https://github.com/phatblinkie/mn_installer.git`
 2. Change into the newly created directory: `cd mn_installer`
-3. Run this script via the command: `sudo ./mn_installer_premium.sh
+3. Run this script via the command: `sudo ./mn_installer_premium.sh`
 
