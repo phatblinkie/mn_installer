@@ -125,7 +125,7 @@ then
 	name=`lsb_release -sc`
 	echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
 apt update
-if [ "$SET_DIST_UPGRADE" = "y"]; then
+if [ "$SET_DIST_UPGRADE" = "y" ]; then
    apt full-upgrade -y
 fi
 apt install ufw -y
@@ -141,7 +141,7 @@ then
         name=`lsb_release -sc`
         echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
 apt-get update
-if [ "$SET_DIST_UPGRADE" = "y"]; then
+if [ "$SET_DIST_UPGRADE" = "y" ]; then
    apt-get full-upgrade -y
 fi
 apt-get install ufw -y
