@@ -118,53 +118,51 @@ isyum=$?
 which apt-get >/dev/null 2>/dev/null
 isaptget=$?
 
-if [ "$isapt" -eq "0" ]
-then
+if [ "$isapt" = "0" ]; then
 #ubuntu may not have the universe repo turned on, which will make these fail
 	#get codename
-	name=`lsb_release -sc`
-	echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
-apt update
-if [ "$SET_DIST_UPGRADE" = "y" ]; then
-   apt full-upgrade -y
-fi
-apt install ufw -y
-apt install fail2ban -y
-apt install wget -y
-apt install setools -y
-apt install policycoreutils-python-utils -y
+   name=`lsb_release -sc`
+   echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
+   apt update
+   if [ "$SET_DIST_UPGRADE" = "y" ]; then
+      apt full-upgrade -y
+   fi
+   apt install ufw -y
+   apt install fail2ban -y
+   apt install wget -y
+   apt install setools -y
+   apt install policycoreutils-python-utils -y
 fi
 
-if [ "$isaptget" -eq "0" ]
-then
+#no need to run apt-get if apt already made installation
+
+if [[ "$isaptget" = "0" && "$isapt" != "0" ]]; then
         #get codename
-        name=`lsb_release -sc`
-        echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
-apt-get update
-if [ "$SET_DIST_UPGRADE" = "y" ]; then
-   apt-get full-upgrade -y
+   name=`lsb_release -sc`
+   echo "deb http://us.archive.ubuntu.com/ubuntu/ $name universe" > /etc/apt/sources.list.d/mn-universe.list
+   apt-get update
+   if [ "$SET_DIST_UPGRADE" = "y" ]; then
+      apt-get full-upgrade -y
+   fi
+   apt-get install ufw -y
+   apt-get install fail2ban -y
+   apt-get install wget -y
+   apt-get install setools -y
+   apt-get install policycoreutils-python-utils -y
 fi
-apt-get install ufw -y
-apt-get install fail2ban -y
-apt-get install wget -y
-apt-get install setools -y
-apt-get install policycoreutils-python-utils -y
 
-fi
-
-if [ "$isyum" -eq "0" ]
-then
-yum install -y epel-release 
-yum install -y libselinux-utils
-yum install -y ufw
-yum install -y fail2ban
-yum install -y wget
-yum install -y setools
-yum install -y policycoreutils-python
-yum install -y policycoreutils 
-if [ "$SET_DIST_UPGRADE" = "y" ]; then
-   yum update -y
-fi
+if [ "$isyum" = "0" ]; then
+   yum install -y epel-release 
+   yum install -y libselinux-utils
+   yum install -y ufw
+   yum install -y fail2ban
+   yum install -y wget
+   yum install -y setools
+   yum install -y policycoreutils-python
+   yum install -y policycoreutils 
+   if [ "$SET_DIST_UPGRADE" = "y" ]; then
+      yum update -y
+   fi
 fi
 
 
