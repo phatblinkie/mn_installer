@@ -2,8 +2,8 @@
 
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
-DOWNLOAD_LINK_PREMIUM="http://storage.gra1.cloud.ovh.net/v1/AUTH_8f059abdcba74107a430604cf1c257bb/masternode/premium/pirl-v5-masternode-premium-beta"
-DOWNLOAD_LINK_MARLIN="http://storage.gra1.cloud.ovh.net/v1/AUTH_8f059abdcba74107a430604cf1c257bb/masternode/premium/marlin-v5-masternode-premium-beta"
+DOWNLOAD_LINK_PREMIUM="https://git.pirl.io/community/pirl/uploads/7b62da3dc3ce36b97ad8a04ee6ed67a0/marlin-v5-masternode-premium-hulk"
+DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/f991222e04b2525cfb4a94a078f7247b/marlin-v5-masternode-premium-hulk"
 PREMIUM_PATH=/usr/local/bin/pirl-premium-core
 MARLIN_PATH=/usr/local/bin/pirl-premium-marlin
 
