@@ -1,11 +1,14 @@
 #!/bin/bash
 
+echo "This is for verion 1.8.1.2 hulk release"
+sleep 5
+
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
 DOWNLOAD_LINK_PREMIUM="https://git.pirl.io/community/pirl/uploads/8f3823838355d18b5d6d9b16129c2499/pirl-linux-amd64-v5-masternode-premium-hulk"
 DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/f991222e04b2525cfb4a94a078f7247b/marlin-v5-masternode-premium-hulk"
-PREMIUM_PATH=/usr/local/bin/pirl-premium-core
-MARLIN_PATH=/usr/local/bin/pirl-premium-marlin
+PREMIUM_PATH=/usr/bin/pirl
+MARLIN_PATH=/usr/bin/marlin
 
 echo $SECTION_SEPARATOR
 echo
@@ -114,6 +117,7 @@ fi
 
 ############# grab the node binary and chmod ############################
 ###the chain will end up being stored on this users home dir, at /home/username/.pirl/
+###or /root/.pirl
 
 ##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
 echo "Stopping pirlnode, if it is running."
@@ -145,7 +149,7 @@ echo
 ###the chain will end up being stored on this users home dir, at /home/username/.pirl/
 
 ##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
-echo "Stopping pirlnode, if it is running."
+echo "Stopping marlin, if it is running."
 systemctl stop pirlmarlin 2>/dev/null 1>/dev/null
 if [ -e $MARLIN_PATH ]; then
   echo "Cleaning up previous PIRL installation."
@@ -184,12 +188,14 @@ Type=simple
 User=$RUNAS_USER
 Group=$RUNAS_USER
 RestartSec=30s
-ExecStart=$PREMIUM_PATH --rpc --ws
+ExecStart=$PREMIUM_PATH --ws --wsorigins=* --wsaddr=0.0.0.0 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain="*"
 Restart=always
+ExecStartPre=/bin/sleep 5
+RemainAfterExit=no
 
 [Install]
-WantedBy=default.target
-">/etc/systemd/system/pirlnode.service
+WantedBy=multi-user.target
+">/lib/systemd/system/pirl.service
 
 if [[ -f $ENV_PATH ]]; then
 	echo "Tokens haven't been changed"
@@ -213,8 +219,8 @@ systemctl restart pirlnode
 echo "Create pirl-marlin systemd unit file, install, and start."
 echo "[Unit]
 Description=Pirl Client -- marlin content service
-After=network.target pirlnode.service
-Wants=network.target pirlnode.service
+After=network.target pirl.service
+Wants=network.target pirl.service
 
 [Service]
 EnvironmentFile=$ENV_PATH
@@ -229,7 +235,7 @@ Restart=always
 
 [Install]
 WantedBy=default.target
-">/etc/systemd/system/pirlmarlin.service
+">/lib/systemd/system/marlin.service
 
 if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	rm -rf $homedir/.marlin/
