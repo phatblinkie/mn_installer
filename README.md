@@ -1,5 +1,5 @@
 # mn_installer.sh
-This script will install a premium masternode v5-beta for PIRL on stock Ubuntu.
+This script will install a premium masternode https://git.pirl.io/community/pirl/tags/pirl-linux-amd64-hulk-1_8_2 for PIRL on stock Ubuntu, or centos.
 
 ## This script will do the following
 1. Ask user to enter his MN token and Poseidon token.
