@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "This is for verion 1.8.1.2 hulk release"
+echo "This is for premium verion 1.8.1.2 hulk release"
 sleep 5
 
 SECTION_SEPARATOR="========================================="
@@ -9,6 +9,39 @@ DOWNLOAD_LINK_PREMIUM="https://git.pirl.io/community/pirl/uploads/8f3823838355d1
 DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/f991222e04b2525cfb4a94a078f7247b/marlin-v5-masternode-premium-hulk"
 PREMIUM_PATH=/usr/bin/pirl
 MARLIN_PATH=/usr/bin/marlin
+
+#fix previous paths
+#if the file is found, but is not a symlink, change it
+if [ ! -h /usr/local/bin/pirl-premium-core ] 
+  then
+    systemctl stop pirlnode
+    systemctl disable pirlnode
+    sleep 2
+    mv -f /usr/local/bin/pirl-premium-core $PREMIUM_PATH
+    $link so as not to need to edit the service files path
+    ln -s $PREMIUM_PATH /usr/local/bin/pirl-premium-core
+    mv /etc/systemd/system/pirlnode.service /lib/systemd/system/pirl.service
+    systemctl daemon-reload
+    systemctl enable pirl
+    systemctl start pirl
+ fi
+ #if the file is found, but is not a symlink, change it
+ if [ ! -h /usr/local/bin/pirl-premium-marlin ] 
+  then
+    systemctl stop pirlmarlin
+    systemctl disable pirlmarlin
+    sleep 2
+    mv -f /usr/local/bin/pirl-premium-marlin $MARLIN_PATH
+    $link so as not to need to edit the service files path
+    ln -s $MARLIN_PATH /usr/local/bin/pirl-premium-marlin
+    mv /etc/systemd/system/pirlmarlin.service /lib/systemd/system/marlin.service
+    systemctl daemon-reload
+    systemctl enable marlin
+    systemctl start marlin
+    
+/usr/local/bin/pirl-premium-marlin
+/etc/systemd/system/pirlmarlin.service
+
 
 echo $SECTION_SEPARATOR
 echo
@@ -120,8 +153,8 @@ fi
 ###or /root/.pirl
 
 ##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
-echo "Stopping pirlnode, if it is running."
-systemctl stop pirlnode 2>/dev/null 1>/dev/null
+echo "Stopping pirl, if it is running."
+systemctl stop pirl 2>/dev/null 1>/dev/null
 if [ -e $PREMIUM_PATH ]; then
   echo "Cleaning up previous PIRL installation."
   rm -f $PREMIUM_PATH 2>/dev/null
@@ -150,7 +183,7 @@ echo
 
 ##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
 echo "Stopping marlin, if it is running."
-systemctl stop pirlmarlin 2>/dev/null 1>/dev/null
+systemctl stop marlin 2>/dev/null 1>/dev/null
 if [ -e $MARLIN_PATH ]; then
   echo "Cleaning up previous PIRL installation."
   rm -f $MARLIN_PATH 2>/dev/null
@@ -198,7 +231,7 @@ WantedBy=multi-user.target
 ">/lib/systemd/system/pirl.service
 
 if [[ -f $ENV_PATH ]]; then
-	echo "Tokens haven't been changed"
+	echo "token file already present, skipping"
 else
 echo "MASTERNODE=\"$MASTERNODE\"
 TOKEN=\"$TOKEN\"">$ENV_PATH
@@ -298,10 +331,10 @@ fi
 echo "All done!"
 echo
 echo "Commands you can run now:"
-echo "Check PIRL-node status with: 'systemctl status pirlnode'"
-echo "Check PIRL-marlin status with: 'systemctl status pirlmarlin'"
-echo "Watch PIRL-node system logs with: 'journalctl -f -u pirlnode'"
-echo "Watch PIRL-marlin system logs with: 'journalctl -f -u pirlmarlin'"
+echo "Check PIRL-node status with: 'systemctl status pirl'"
+echo "Check PIRL-marlin status with: 'systemctl status marlin'"
+echo "Watch PIRL-node system logs with: 'journalctl -f -u pirl'"
+echo "Watch PIRL-marlin system logs with: 'journalctl -f -u marlin'"
 if [ "$SET_FIREWALL" = "y" ]; then
    echo "Check firewall status with: 'ufw status'"
 fi
