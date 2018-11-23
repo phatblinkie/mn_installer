@@ -3,7 +3,7 @@
 SECTION_SEPARATOR="========================================="
 ENV_PATH_CONTENT=/etc/pirlnode-content-env
 DOWNLOAD_LINK_CONTENT="https://git.pirl.io/community/pirl/uploads/9f6b22ff763e01353648202bb3718e74/pirl-linux-amd64-v5-masternode-content-hulk"
-DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/7b44acaa183a620bd1e57c1663ee9b72/marlin-v5-masternode-content-hulk"
+DOWNLOAD_LINK_MARLIN_CONTENT="https://git.pirl.io/community/pirl/uploads/7b44acaa183a620bd1e57c1663ee9b72/marlin-v5-masternode-content-hulk"
 CONTENT_PATH=/usr/local/bin/pirl-content-core
 MARLIN_CONTENT_PATH=/usr/local/bin/pirl-content-marlin
 
@@ -12,14 +12,14 @@ echo
 
 ## https://poseidon.pirl.io/accounts/masternodes-list-private/
 MASTERNODE=""
-echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
+echo "Copy/Paste in the Content-MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
 echo "Or leave it blank if you already have it written in $ENV_PATH_CONTENT and want no change"
 echo
-read -p 'Enter MN token:' MASTERNODE
+read -p 'Enter Content-MN token:' MASTERNODE
 echo
 
 if [[ -f $ENV_PATH_CONTENT && "$MASTERNODE" = "" ]]; then
-	echo "Leaving MN token as is"
+	echo "Leaving Content-MN token as is"
 	echo
  else
  	if [[ ! -f $ENV_PATH_CONTENT && "$MASTERNODE" = "" ]]; then
@@ -28,8 +28,8 @@ if [[ -f $ENV_PATH_CONTENT && "$MASTERNODE" = "" ]]; then
 	echo
  	rm -f $ENV_PATH_CONTENT
 	while [ "$MASTERNODE" = "" ]; do
-		echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
-		read -p 'Enter MN token:' MASTERNODE
+		echo "Copy/Paste in the Content-MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
+		read -p 'Enter Content-MN token:' MASTERNODE
 		echo
 	done
  fi
@@ -57,7 +57,7 @@ echo
 #username you want the service to run as, if you want it to run as root, leave root
 #if you want it to run as pirl put in pirl. no spaces allowed, and all lower case please.
 #this user will not be used as a login user, so no password will be set.
-read -p "What username should the PIRL Masternode run as? (root, pirl, or leave blank to run as current user): " TEST_RUNAS_USER
+read -p "What username should the PIRL Content Masternode run as? (root, pirl, or leave blank to run as current user): " TEST_RUNAS_USER
 if [ "$TEST_RUNAS_USER" = "" ]; then
   RUNAS_USER=`logname`
 else
@@ -123,7 +123,7 @@ if [ -e $CONTENT_PATH ]; then
   rm -f $CONTENT_PATH 2>/dev/null
 fi
 #get pirl node
-echo "downloading latest PIRL Masternode"
+echo "downloading latest PIRL Content Masternode"
 wget -O $CONTENT_PATH $DOWNLOAD_LINK_CONTENT
 downloadresult=$?
 chmod 0755 $CONTENT_PATH
@@ -152,8 +152,8 @@ if [ -e $MARLIN_CONTENT_PATH ]; then
   rm -f $MARLIN_CONTENT_PATH 2>/dev/null
 fi
 #get pirl-marlin node
-echo "downloading latest PIRL Marlin"
-wget -O $MARLIN_CONTENT_PATH $DOWNLOAD_LINK_MARLIN
+echo "downloading latest PIRL Content Marlin"
+wget -O $MARLIN_CONTENT_PATH $DOWNLOAD_LINK_MARLIN_CONTENT
 downloadresult=$?
 chmod 0755 $MARLIN_CONTENT_PATH
 chmodresult=$?
@@ -161,7 +161,7 @@ chmodresult=$?
 #double check download and perms
 if [ "$downloadresult" != "0" ] || [ "$chmodresult" != "0" ]; then
   echo "error happened downloading the node from"
-  echo $DOWNLOAD_LINK_MARLIN
+  echo $DOWNLOAD_LINK_MARLIN_CONTENT
   echo "or trying to chmod it to 0755 at location"
   echo $MARLIN_CONTENT_PATH
   exit 6
