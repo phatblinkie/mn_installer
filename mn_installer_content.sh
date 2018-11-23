@@ -1,11 +1,11 @@
 #!/bin/bash
 
 SECTION_SEPARATOR="========================================="
-ENV_PATH=/etc/pirlnode-content-env
-DOWNLOAD_LINK_PREMIUM="https://git.pirl.io/community/pirl/uploads/9f6b22ff763e01353648202bb3718e74/pirl-linux-amd64-v5-masternode-content-hulk"
+ENV_PATH_CONTENT=/etc/pirlnode-content-env
+DOWNLOAD_LINK_CONTENT="https://git.pirl.io/community/pirl/uploads/9f6b22ff763e01353648202bb3718e74/pirl-linux-amd64-v5-masternode-content-hulk"
 DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/7b44acaa183a620bd1e57c1663ee9b72/marlin-v5-masternode-content-hulk"
-PREMIUM_PATH=/usr/local/bin/pirl-content-core
-MARLIN_PATH=/usr/local/bin/pirl-content-marlin
+CONTENT_PATH=/usr/local/bin/pirl-content-core
+MARLIN_CONTENT_PATH=/usr/local/bin/pirl-content-marlin
 
 echo $SECTION_SEPARATOR
 echo
@@ -13,20 +13,20 @@ echo
 ## https://poseidon.pirl.io/accounts/masternodes-list-private/
 MASTERNODE=""
 echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
-echo "Or leave it blank if you already have it written in $ENV_PATH and want no change"
+echo "Or leave it blank if you already have it written in $ENV_PATH_CONTENT and want no change"
 echo
 read -p 'Enter MN token:' MASTERNODE
 echo
 
-if [[ -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
+if [[ -f $ENV_PATH_CONTENT && "$MASTERNODE" = "" ]]; then
 	echo "Leaving MN token as is"
 	echo
  else
- 	if [[ ! -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
-		echo "$ENV_PATH file for tokens doesn't exist"
+ 	if [[ ! -f $ENV_PATH_CONTENT && "$MASTERNODE" = "" ]]; then
+		echo "$ENV_PATH_CONTENT file for tokens doesn't exist"
 	fi
 	echo
- 	rm -f $ENV_PATH
+ 	rm -f $ENV_PATH_CONTENT
 	while [ "$MASTERNODE" = "" ]; do
 		echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
 		read -p 'Enter MN token:' MASTERNODE
@@ -118,23 +118,23 @@ fi
 ##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
 echo "Stopping pirlnode, if it is running."
 systemctl stop pirlnode 2>/dev/null 1>/dev/null
-if [ -e $PREMIUM_PATH ]; then
+if [ -e $CONTENT_PATH ]; then
   echo "Cleaning up previous PIRL installation."
-  rm -f $PREMIUM_PATH 2>/dev/null
+  rm -f $CONTENT_PATH 2>/dev/null
 fi
 #get pirl node
 echo "downloading latest PIRL Masternode"
-wget -O $PREMIUM_PATH $DOWNLOAD_LINK_PREMIUM
+wget -O $CONTENT_PATH $DOWNLOAD_LINK_CONTENT
 downloadresult=$?
-chmod 0755 $PREMIUM_PATH
+chmod 0755 $CONTENT_PATH
 chmodresult=$?
 
 #double check download and perms
 if [ "$downloadresult" != "0" ] || [ "$chmodresult" != "0" ]; then
   echo "error happened downloading the node from"
-  echo $DOWNLOAD_LINK_PREMIUM
+  echo $DOWNLOAD_LINK_CONTENT
   echo "or trying to chmod it to 0755 at location"
-  echo $PREMIUM_PATH
+  echo $CONTENT_PATH
   exit 6
 fi
 
@@ -147,15 +147,15 @@ echo
 ##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
 echo "Stopping pirlnode, if it is running."
 systemctl stop pirlmarlin 2>/dev/null 1>/dev/null
-if [ -e $MARLIN_PATH ]; then
+if [ -e $MARLIN_CONTENT_PATH ]; then
   echo "Cleaning up previous PIRL installation."
-  rm -f $MARLIN_PATH 2>/dev/null
+  rm -f $MARLIN_CONTENT_PATH 2>/dev/null
 fi
 #get pirl-marlin node
 echo "downloading latest PIRL Marlin"
-wget -O $MARLIN_PATH $DOWNLOAD_LINK_MARLIN
+wget -O $MARLIN_CONTENT_PATH $DOWNLOAD_LINK_MARLIN
 downloadresult=$?
-chmod 0755 $MARLIN_PATH
+chmod 0755 $MARLIN_CONTENT_PATH
 chmodresult=$?
 
 #double check download and perms
@@ -163,7 +163,7 @@ if [ "$downloadresult" != "0" ] || [ "$chmodresult" != "0" ]; then
   echo "error happened downloading the node from"
   echo $DOWNLOAD_LINK_MARLIN
   echo "or trying to chmod it to 0755 at location"
-  echo $MARLIN_PATH
+  echo $MARLIN_CONTENT_PATH
   exit 6
 fi
 
@@ -178,25 +178,25 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=$ENV_PATH
+EnvironmentFile=$ENV_PATH_CONTENT
 
 Type=simple
 User=$RUNAS_USER
 Group=$RUNAS_USER
 RestartSec=30s
-ExecStart=$PREMIUM_PATH --rpc --ws
+ExecStart=$CONTENT_PATH --rpc --ws
 Restart=always
 
 [Install]
 WantedBy=default.target
 ">/etc/systemd/system/pirlnode-content.service
 
-if [[ -f $ENV_PATH ]]; then
+if [[ -f $ENV_PATH_CONTENT ]]; then
 	echo "Tokens haven't been changed"
 else
 echo "MASTERNODE=\"$MASTERNODE\"
-TOKEN=\"$TOKEN\"">$ENV_PATH
-echo "Successfully created $ENV_PATH with new tokens"
+TOKEN=\"$TOKEN\"">$ENV_PATH_CONTENT
+echo "Successfully created $ENV_PATH_CONTENT with new tokens"
 fi
 
 ###reload in case it was there before, and now could be changed
@@ -217,14 +217,14 @@ After=network.target pirlnode-content.service
 Wants=network.target pirlnode-content.service
 
 [Service]
-EnvironmentFile=$ENV_PATH
+EnvironmentFile=$ENV_PATH_CONTENT
 
 Type=simple
 User=$RUNAS_USER
 Group=$RUNAS_USER
 RestartSec=30s
 ExecStartPre=/bin/sleep 5
-ExecStart=$MARLIN_PATH daemon
+ExecStart=$MARLIN_CONTENT_PATH daemon
 Restart=always
 
 [Install]
@@ -245,14 +245,14 @@ if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	echo -ne ".....\r"
 	sleep 1
 	echo -ne "\r\033[K"
-	su -c "$MARLIN_PATH init 1>/dev/null" $RUNAS_USER -s /bin/bash
+	su -c "$MARLIN_CONTENT_PATH init 1>/dev/null" $RUNAS_USER -s /bin/bash
 	chown -R $RUNAS_USER:$RUNAS_USER $homedir/.marlin/
 	
 	if [ -f $homedir/.marlin/config ]; then
 		echo "Pirl marlin successfully initialized"
  	else
   		echo "Something went wrong with initializing marlin folder"
-		echo "Please run '$MARLIN_PATH init' manually after installation"
+		echo "Please run '$MARLIN_CONTENT_PATH init' manually after installation"
 	fi
 fi
 
