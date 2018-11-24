@@ -273,11 +273,11 @@ echo
 ASK_FIREWALL="y"
 while [ "$ASK_FIREWALL" = "y" ]; do
   read -p "Would you like to install and configure firewall and change SSH settings? (y/N): " SET_FIREWALL
-  if [[ "$SET_FIREWALL" = "y" || "$SET_FIREWALL" = "Y" ]]; then
+  if [[ "$(tr '[:upper:]' '[:lower:]' <<< "$SET_FIREWALL")" = "y" || "$(tr '[:upper:]' '[:lower:]' <<< "$SET_FIREWALL")" = "yes" ]]; then
   	SET_FIREWALL="y"
   	ASK_FIREWALL="n"
   else
-    if [[ "$SET_FIREWALL" = "n" || "$SET_FIREWALL" = "N" || "$SET_FIREWALL" = "" ]]; then
+    if [[ "$(tr '[:upper:]' '[:lower:]' <<< "$SET_FIREWALL")" = "n" || "$(tr '[:upper:]' '[:lower:]' <<< "$SET_FIREWALL")" = "no" || "$SET_FIREWALL" = "" ]]; then
     	SET_FIREWALL="n"
 	ASK_FIREWALL="n"
     fi
