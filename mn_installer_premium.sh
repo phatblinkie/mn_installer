@@ -38,9 +38,8 @@ if [ ! -h /usr/local/bin/pirl-premium-core ]
     systemctl daemon-reload
     systemctl enable marlin
     systemctl start marlin
-    
-/usr/local/bin/pirl-premium-marlin
-/etc/systemd/system/pirlmarlin.service
+ fi 
+
 
 
 echo $SECTION_SEPARATOR
