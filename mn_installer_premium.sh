@@ -5,9 +5,32 @@ sleep 5
 
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
-DOWNLOAD_LINK_PREMIUM="https://git.pirl.io/community/pirl/uploads/8f3823838355d18b5d6d9b16129c2499/pirl-linux-amd64-v5-masternode-premium-hulk"
+#determine if this is a content node
+PS3='Please enter your Masternode type: '
+options=("Premium" "Content" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Premium")
+            echo "you chose Premium, good choice"
+DOWNLOAD_LINK_PIRL="https://git.pirl.io/community/pirl/uploads/8f3823838355d18b5d6d9b16129c2499/pirl-linux-amd64-v5-masternode-premium-hulk"
 DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/f991222e04b2525cfb4a94a078f7247b/marlin-v5-masternode-premium-hulk"
-PREMIUM_PATH=/usr/bin/pirl
+            ;;
+        "Option 2")
+            echo "you chose Content, here we go!"
+DOWNLOAD_LINK_PIRL="https://git.pirl.io/community/pirl/uploads/9f6b22ff763e01353648202bb3718e74/pirl-linux-amd64-v5-masternode-content-hulk"
+DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/7b44acaa183a620bd1e57c1663ee9b72/marlin-v5-masternode-content-hulk"
+            ;;
+        "Quit")
+            break
+            ;;
+        *) echo "invalid option $REPLY";;
+    esac
+done
+
+
+
+PIRL_PATH=/usr/bin/pirl
 MARLIN_PATH=/usr/bin/marlin
 
 #fix previous paths
@@ -99,23 +122,23 @@ fi
 echo "Stopping pirl, if it is running."
 systemctl stop pirl 2>/dev/null 1>/dev/null
 sleep 2
-if [ -e $PREMIUM_PATH ]; then
+if [ -e $PIRL_PATH ]; then
   echo "Cleaning up previous PIRL installation."
-  rm -f $PREMIUM_PATH 2>/dev/null
+  rm -f $PIRL_PATH 2>/dev/null
 fi
 #get pirl node
 echo "downloading latest PIRL Masternode"
-wget -O $PREMIUM_PATH $DOWNLOAD_LINK_PREMIUM
+wget -O $PIRL_PATH $DOWNLOAD_LINK_PIRL
 downloadresult=$?
-chmod 0755 $PREMIUM_PATH
+chmod 0755 $PIRL_PATH
 chmodresult=$?
 
 #double check download and perms
 if [ "$downloadresult" != "0" ] || [ "$chmodresult" != "0" ]; then
-  echo "error happened downloading the node from"
-  echo $DOWNLOAD_LINK_PREMIUM
-  echo "or trying to chmod it to 0755 at location"
-  echo $PREMIUM_PATH
+  echo "error happened downloading the node from:"
+  echo $DOWNLOAD_LINK_PIRL
+  echo "or trying to chmod it to 0755 at location:"
+  echo $PIRL_PATH
   exit 6
 fi
 
@@ -168,7 +191,7 @@ Type=simple
 User=root
 Group=root
 RestartSec=30s
-ExecStart=$PREMIUM_PATH --ws --wsorigins=* --wsaddr=0.0.0.0 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain="*"
+ExecStart=$PIRL_PATH --ws --wsorigins=* --wsaddr=0.0.0.0 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain="*"
 Restart=always
 ExecStartPre=/bin/sleep 5
 RemainAfterExit=no
