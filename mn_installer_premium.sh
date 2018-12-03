@@ -11,33 +11,25 @@ PREMIUM_PATH=/usr/bin/pirl
 MARLIN_PATH=/usr/bin/marlin
 
 #fix previous paths
-#if the file is found, but is not a symlink, change it
-if [ ! -h /usr/local/bin/pirl-premium-core ] 
+#if the file is found, then it was previously run, change it
+if [ -f /usr/local/bin/pirl-premium-core ] 
   then
     systemctl stop pirlnode
     systemctl disable pirlnode
     sleep 2
-    mv -f /usr/local/bin/pirl-premium-core $PREMIUM_PATH
-    $link so as not to need to edit the service files path
-    ln -s $PREMIUM_PATH /usr/local/bin/pirl-premium-core
-    mv /etc/systemd/system/pirlnode.service /lib/systemd/system/pirl.service
+    rm -f /usr/local/bin/pirl-premium-core 
+    rm -f /etc/systemd/system/pirlnode.service 
     systemctl daemon-reload
-    systemctl enable pirl
-    systemctl start pirl
  fi
- #if the file is found, but is not a symlink, change it
- if [ ! -h /usr/local/bin/pirl-premium-marlin ] 
+ #if the file is found, then it was previously run, change it
+ if [ -f /usr/local/bin/pirl-premium-marlin ] 
   then
     systemctl stop pirlmarlin
     systemctl disable pirlmarlin
     sleep 2
-    mv -f /usr/local/bin/pirl-premium-marlin $MARLIN_PATH
-    $link so as not to need to edit the service files path
-    ln -s $MARLIN_PATH /usr/local/bin/pirl-premium-marlin
-    mv /etc/systemd/system/pirlmarlin.service /lib/systemd/system/marlin.service
+    rm -f /usr/local/bin/pirl-premium-marlin
+    rm -f /etc/systemd/system/pirlmarlin.service
     systemctl daemon-reload
-    systemctl enable marlin
-    systemctl start marlin
  fi 
 
 
@@ -89,54 +81,6 @@ echo
 echo $SECTION_SEPARATOR
 echo
 
-#username you want the service to run as, if you want it to run as root, leave root
-#if you want it to run as pirl put in pirl. no spaces allowed, and all lower case please.
-#this user will not be used as a login user, so no password will be set.
-read -p "What username should the PIRL Masternode run as? (root, pirl, or leave blank to run as current user): " TEST_RUNAS_USER
-if [ "$TEST_RUNAS_USER" = "" ]; then
-  RUNAS_USER=`logname`
-else
-  RUNAS_USER=$TEST_RUNAS_USER
-fi
-
-#check if username already exists,(if not we will make it later)
-#if so, does it have a valid home dir for chain storage?
-CREATEUSERNAME=0
-getent passwd $RUNAS_USER > /dev/null
-if [ $? -eq 0 ]; then
-    echo "User $RUNAS_USER exists"
-    homedir=$( getent passwd "$RUNAS_USER" | cut -d: -f6 )
-    if [ ! -d $homedir ]; then
-      echo "$RUNAS_USER has no home dir, or its not available. exiting."
-      exit 4
-    fi
- else
-   echo "User $RUNAS_USER not found, will create."
-   CREATEUSERNAME=1
-   sleep 1
-fi
-
-#create the user if needed. just a run as user, not a login user, but they must have a home dir for the chain storage
-if [ "$CREATEUSERNAME" = "1" ]; then
-   getent passwd $RUNAS_USER > /dev/null || useradd -r -m -s /usr/sbin/nologin -c "pirl masternode user" $RUNAS_USER
-fi
-
-#make sure its was created
-getent passwd $RUNAS_USER > /dev/null
-if [ $? -eq 0 ]; then
-    echo "User $RUNAS_USER created"
-    homedir=$( getent passwd "$RUNAS_USER" | cut -d: -f6 )
-    if [ ! -d $homedir ]; then
-      echo "New users home dir created as well @ $homedir"
-    fi
- else
- echo "user $RUNAS_USER not found, tried to create but failed. stopping"
- exit 4
-fi
-
-
-echo $SECTION_SEPARATOR
-echo
 
 # download wget before pirl installation
 
@@ -154,6 +98,7 @@ fi
 ##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
 echo "Stopping pirl, if it is running."
 systemctl stop pirl 2>/dev/null 1>/dev/null
+sleep 2
 if [ -e $PREMIUM_PATH ]; then
   echo "Cleaning up previous PIRL installation."
   rm -f $PREMIUM_PATH 2>/dev/null
@@ -183,6 +128,7 @@ echo
 ##make sure its not running if for reason the service is already there, do clean up incase it was run again  for some reason
 echo "Stopping marlin, if it is running."
 systemctl stop marlin 2>/dev/null 1>/dev/null
+sleep 2
 if [ -e $MARLIN_PATH ]; then
   echo "Cleaning up previous PIRL installation."
   rm -f $MARLIN_PATH 2>/dev/null
@@ -214,11 +160,13 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=$ENV_PATH
+;EnvironmentFile=$ENV_PATH
+Environment=MASTERNODE=$MASTERNODE
+Environment=TOKEN=$TOKEN
 
 Type=simple
-User=$RUNAS_USER
-Group=$RUNAS_USER
+User=root
+Group=root
 RestartSec=30s
 ExecStart=$PREMIUM_PATH --ws --wsorigins=* --wsaddr=0.0.0.0 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain="*"
 Restart=always
@@ -229,13 +177,14 @@ RemainAfterExit=no
 WantedBy=multi-user.target
 ">/lib/systemd/system/pirl.service
 
-if [[ -f $ENV_PATH ]]; then
-	echo "token file already present, skipping"
-else
-echo "MASTERNODE=\"$MASTERNODE\"
-TOKEN=\"$TOKEN\"">$ENV_PATH
-echo "Successfully created $ENV_PATH with new tokens"
-fi
+#tokens are now in the systemd files
+#if [[ -f $ENV_PATH ]]; then
+#	echo "token file already present, skipping"
+#else
+#echo "MASTERNODE=\"$MASTERNODE\"
+#TOKEN=\"$TOKEN\"">$ENV_PATH
+#echo "Successfully created $ENV_PATH with new tokens"
+#fi
 
 ###reload in case it was there before, and now could be changed
 systemctl daemon-reload
@@ -255,11 +204,13 @@ After=network.target pirl.service
 Wants=network.target pirl.service
 
 [Service]
-EnvironmentFile=$ENV_PATH
+;EnvironmentFile=$ENV_PATH
+Environment=MASTERNODE=$MASTERNODE
+Environment=TOKEN=$TOKEN
 
 Type=simple
-User=$RUNAS_USER
-Group=$RUNAS_USER
+User=root
+Group=root
 RestartSec=30s
 ExecStartPre=/bin/sleep 5
 ExecStart=$MARLIN_PATH daemon
@@ -339,3 +290,4 @@ if [ "$SET_FIREWALL" = "y" ]; then
 fi
 
 exit 0
+
