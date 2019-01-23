@@ -184,12 +184,10 @@ echo "[Unit]
 Description=Pirl Master Node
 After=network-online.target
 Wants=network-online.target
-
 [Service]
 ;EnvironmentFile=$ENV_PATH
 Environment=MASTERNODE=$MASTERNODE
 Environment=TOKEN=$TOKEN
-
 Type=simple
 User=root
 Group=root
@@ -198,7 +196,6 @@ ExecStart=$PIRL_PATH --ws --wsorigins=* --wsaddr=0.0.0.0 --rpc --rpcaddr=0.0.0.0
 Restart=always
 ExecStartPre=/bin/sleep 5
 RemainAfterExit=no
-
 [Install]
 WantedBy=multi-user.target
 ">/lib/systemd/system/pirl.service
@@ -216,10 +213,10 @@ WantedBy=multi-user.target
 systemctl daemon-reload
 
 ####enable the node
-systemctl enable pirlnode
+systemctl enable pirl
 
 ###start the node
-systemctl restart pirlnode
+systemctl restart pirl
 
 
 ############ populate files for systemd-marlin service #########
@@ -228,12 +225,10 @@ echo "[Unit]
 Description=Pirl Client -- marlin content service
 After=network.target pirl.service
 Wants=network.target pirl.service
-
 [Service]
 ;EnvironmentFile=$ENV_PATH
 Environment=MASTERNODE=$MASTERNODE
 Environment=TOKEN=$TOKEN
-
 Type=simple
 User=root
 Group=root
@@ -241,11 +236,10 @@ RestartSec=30s
 ExecStartPre=/bin/sleep 5
 ExecStart=$MARLIN_PATH daemon
 Restart=always
-
 [Install]
 WantedBy=default.target
 ">/lib/systemd/system/marlin.service
-
+homedir=/root
 if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	rm -rf $homedir/.marlin/
 	echo "Wait 5 seconds for pirlnode to run before initializing marlin"
@@ -259,9 +253,7 @@ if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	sleep 1
 	echo -ne ".....\r"
 	sleep 1
-	echo -ne "\r\033[K"
-	su -c "$MARLIN_PATH init 1>/dev/null" $RUNAS_USER -s /bin/bash
-	chown -R $RUNAS_USER:$RUNAS_USER $homedir/.marlin/
+	/usr/bin/marlin init 1>/dev/null
 	
 	if [ -f $homedir/.marlin/config ]; then
 		echo "Pirl marlin successfully initialized"
@@ -275,10 +267,10 @@ fi
 systemctl daemon-reload
 
 ####enable the node
-systemctl enable pirlmarlin
+systemctl enable marlin
 
 ###start the node
-systemctl restart pirlmarlin
+systemctl restart marlin
 
 
 echo $SECTION_SEPARATOR
@@ -316,4 +308,3 @@ if [ "$SET_FIREWALL" = "y" ]; then
 fi
 
 exit 0
-
