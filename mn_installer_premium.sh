@@ -5,6 +5,16 @@ sleep 5
 
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
+
+$marlin_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.2-hulk/content/marlin-v5-masternode-content-hulk'
+$marlin_content_md5='75168eb673cad340a14e4d097b69cb1e'
+$marlin_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.2-hulk/premium/marlin-v5-masternode-premium-hulk'
+$marlin_premium_md5='df35a110eed434dda7e0ad15aa928157'
+$masternode_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/content/pirl-linux-amd64-content'
+$masternode_content_md5='4cdd976938ee2809b56c28ba14fd5675'
+$masternode_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/premium/pirl-linux-amd64-premium'
+$masternode_premium_md5='848557e760a4f6d575345985be8d033b'
+
 #determine if this is a content node
 PS3='Please enter your Masternode type: '
 options=("Premium" "Content" "Quit")
@@ -13,14 +23,14 @@ do
     case $opt in
         "Premium")
             echo "you chose Premium, good choice"
-DOWNLOAD_LINK_PIRL="https://git.pirl.io/community/pirl/uploads/8f3823838355d18b5d6d9b16129c2499/pirl-linux-amd64-v5-masternode-premium-hulk"
-DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/f991222e04b2525cfb4a94a078f7247b/marlin-v5-masternode-premium-hulk"
+DOWNLOAD_LINK_PIRL=$masternode_premium_link
+DOWNLOAD_LINK_MARLIN=$marlin_premium_link
 	    break
             ;;
         "Content")
             echo "you chose Content, here we go!"
-DOWNLOAD_LINK_PIRL="https://git.pirl.io/community/pirl/uploads/9f6b22ff763e01353648202bb3718e74/pirl-linux-amd64-v5-masternode-content-hulk"
-DOWNLOAD_LINK_MARLIN="https://git.pirl.io/community/pirl/uploads/7b44acaa183a620bd1e57c1663ee9b72/marlin-v5-masternode-content-hulk"
+DOWNLOAD_LINK_PIRL=$masternode_content_link
+DOWNLOAD_LINK_MARLIN=$marlin_content_link
 	    break
             ;;
         "Quit")
@@ -64,7 +74,9 @@ echo
 
 ## https://poseidon.pirl.io/accounts/masternodes-list-private/
 MASTERNODE=""
-echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
+echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/dashboard/masternodes/
+It will have hyphens in it, like this c0c4dfgd-9hyd-4b52-9448-74b66c2a6de0
+"
 #no longer using the environment file
 #echo "Or leave it blank if you already have it written in $ENV_PATH and want no change"
 echo
@@ -94,7 +106,7 @@ echo
 TOKEN=""
 #if [ "$MASTERNODE" != "" ]; then
 #	while [ "$TOKEN" = "" ]; do
-	  echo "Copy/Paste in your POSEIDON account's token.  It can be found at https://poseidon.pirl.io/accounts/settings/"
+	  echo "Copy/Paste in your POSEIDON account's token.  It can be found at https://poseidon.pirl.io/account/profile/"
 	  echo
 	  read -p 'Enter TOKEN:' TOKEN
 	  echo
