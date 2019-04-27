@@ -1,19 +1,19 @@
 #!/bin/bash
 
-echo "This is for premium verion 1.8.1.2 hulk release"
+echo "This is for premium or content verion 1.8.27 hulk release"
 sleep 5
 
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
 
-$marlin_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.2-hulk/content/marlin-v5-masternode-content-hulk'
-$marlin_content_md5='75168eb673cad340a14e4d097b69cb1e'
-$marlin_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.2-hulk/premium/marlin-v5-masternode-premium-hulk'
-$marlin_premium_md5='df35a110eed434dda7e0ad15aa928157'
-$masternode_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/content/pirl-linux-amd64-content'
-$masternode_content_md5='4cdd976938ee2809b56c28ba14fd5675'
-$masternode_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/premium/pirl-linux-amd64-premium'
-$masternode_premium_md5='848557e760a4f6d575345985be8d033b'
+marlin_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.2-hulk/content/marlin-v5-masternode-content-hulk'
+marlin_content_md5='75168eb673cad340a14e4d097b69cb1e'
+marlin_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.2-hulk/premium/marlin-v5-masternode-premium-hulk'
+marlin_premium_md5='df35a110eed434dda7e0ad15aa928157'
+masternode_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/content/pirl-linux-amd64-content'
+masternode_content_md5='4cdd976938ee2809b56c28ba14fd5675'
+masternode_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/premium/pirl-linux-amd64-premium'
+masternode_premium_md5='848557e760a4f6d575345985be8d033b'
 
 #determine if this is a content node
 PS3='Please enter your Masternode type: '
@@ -74,9 +74,8 @@ echo
 
 ## https://poseidon.pirl.io/accounts/masternodes-list-private/
 MASTERNODE=""
-echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/dashboard/masternodes/
-It will have hyphens in it, like this c0c4dfgd-9hyd-4b52-9448-74b66c2a6de0
-"
+echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/
+It will have hyphens in it, like this marlin_content_linkc0c5dfdd-9ced-4b52-9448-74b66c2a6de0c0c5dfdd-9ced-4b52-9448-74b66c2a6de0"
 #no longer using the environment file
 #echo "Or leave it blank if you already have it written in $ENV_PATH and want no change"
 echo
@@ -106,7 +105,7 @@ echo
 TOKEN=""
 #if [ "$MASTERNODE" != "" ]; then
 #	while [ "$TOKEN" = "" ]; do
-	  echo "Copy/Paste in your POSEIDON account's token.  It can be found at https://poseidon.pirl.io/account/profile/"
+	  echo "Copy/Paste in your POSEIDON account's token.  It can be found at https://poseidon.pirl.io/accounts/settings/"
 	  echo
 	  read -p 'Enter TOKEN:' TOKEN
 	  echo
