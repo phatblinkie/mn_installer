@@ -6,10 +6,10 @@ sleep 5
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
 
-marlin_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.2-hulk/content/marlin-v5-masternode-content-hulk'
-marlin_content_md5='75168eb673cad340a14e4d097b69cb1e'
-marlin_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.2-hulk/premium/marlin-v5-masternode-premium-hulk'
-marlin_premium_md5='df35a110eed434dda7e0ad15aa928157'
+marlin_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/marlin/marlin-content-premium-gecko-1_8_27'
+marlin_content_md5='870fc5bc8f1c16ae50b168c389f3a743'
+marlin_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/marlin/marlin-content-premium-gecko-1_8_27'
+marlin_premium_md5='870fc5bc8f1c16ae50b168c389f3a743'
 masternode_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/content/pirl-linux-amd64-content'
 masternode_content_md5='4cdd976938ee2809b56c28ba14fd5675'
 masternode_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/premium/pirl-linux-amd64-premium'
