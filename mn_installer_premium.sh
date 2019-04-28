@@ -6,9 +6,9 @@ sleep 5
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
 
-marlin_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/marlin/marlin-content-premium-gecko-1_8_27'
+marlin_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/marlin/marlin-masternode-gecko1_8_27'
 marlin_content_md5='870fc5bc8f1c16ae50b168c389f3a743'
-marlin_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/marlin/marlin-content-premium-gecko-1_8_27'
+marlin_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/marlin/marlin-masternode-gecko1_8_27'
 marlin_premium_md5='870fc5bc8f1c16ae50b168c389f3a743'
 masternode_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/content/pirl-linux-amd64-content'
 masternode_content_md5='4cdd976938ee2809b56c28ba14fd5675'
