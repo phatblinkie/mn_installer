@@ -1,5 +1,5 @@
 # mn_installer.sh
-This script will install a Premium or Content masternode https://git.pirl.io/community/pirl/tags/pirl-linux-amd64-hulk-1_8_2 for PIRL on stock Ubuntu, or centos.
+This script will install a Premium or Content masternode https://git.pirl.io/community/pirl/tags/1.8.27-gecko for PIRL on stock Ubuntu, or centos.
 
 ## This script will do the following
 1. Ask user to enter his MN token and Poseidon token.
@@ -14,7 +14,7 @@ This script will install a Premium or Content masternode https://git.pirl.io/com
 
 ## firewall.sh module will do the following
 1. Upgrades system if user allows.
-2. Install the ufw firewall and open needed ports.
+2. Install the ufw firewall and open needed ports. (will be updated soon to firewalld instead to align more with one click installer)
 3. Optionally update the SSH daemon to run on a non-standard port of your choice.
 
 ## To run this script
