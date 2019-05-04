@@ -203,7 +203,7 @@ Type=simple
 User=root
 Group=root
 RestartSec=30s
-ExecStart=$PIRL_PATH --ws --wsorigins=* --wsaddr=0.0.0.0 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain="*" --mine --etherbase=0x0000000000000000000000000000000000000000
+ExecStart=$PIRL_PATH --ws --wsorigins=* --wsaddr=0.0.0.0 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain="*" --mine --etherbase=0x0000000000000000000000000000000000000001
 Restart=always
 ExecStartPre=/bin/sleep 5
 RemainAfterExit=no
