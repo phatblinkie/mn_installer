@@ -1,5 +1,5 @@
 # mn_installer.sh
-This script will install a Premium or Content masternode https://git.pirl.io/community/pirl/tags/1.8.27-gecko for PIRL on stock Ubuntu, or centos.
+This script will install a Premium or Content masternode https://git.pirl.io/community/pirl/tags/1.8.27-damocles for PIRL on stock Ubuntu, or centos.
 
 ## This script will do the following
 1. Ask user to enter his MN token and Poseidon token.
