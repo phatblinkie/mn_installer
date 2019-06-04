@@ -6,14 +6,14 @@ sleep 5
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
 
-marlin_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/marlin/marlin-masternode-gecko1_8_27'
-marlin_content_md5='870fc5bc8f1c16ae50b168c389f3a743'
-marlin_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/marlin/marlin-masternode-gecko1_8_27'
-marlin_premium_md5='870fc5bc8f1c16ae50b168c389f3a743'
-masternode_content_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/content/pirl-linux-amd64-content'
-masternode_content_md5='4cdd976938ee2809b56c28ba14fd5675'
-masternode_premium_link='https://storage.googleapis.com/pirl-node/pirl-1.8.27-gecko/masternodes/premium/pirl-linux-amd64-premium'
-masternode_premium_md5='848557e760a4f6d575345985be8d033b'
+marlin_content_link='https://git.pirl.io/community/pirl/uploads/da518434e6d4c9ceb6409a3d8874ca67/marlin-1.8.27-damocles'
+marlin_content_md5='a36e331790027daeefcc0ec169d167db'
+marlin_premium_link='https://git.pirl.io/community/pirl/uploads/da518434e6d4c9ceb6409a3d8874ca67/marlin-1.8.27-damocles'
+marlin_premium_md5='a36e331790027daeefcc0ec169d167db'
+masternode_content_link='https://git.pirl.io/community/pirl/uploads/47e87b2702fb7facf8619006b572a0d8/pirl-masternode-content-1.8.27-damocles'
+masternode_content_md5='426a011bb41e2c49890f34e77560b469'
+masternode_premium_link='https://git.pirl.io/community/pirl/uploads/9e5d5b3877929df8ba78ad65696f365a/pirl-masternode-premium-1.8.27-damocles'
+masternode_premium_md5='c373367dbed4b379f8a877668990e8e2'
 
 #determine if this is a content node
 PS3='Please enter your Masternode type: '
