@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "This is for premium or content verion 1.8.27 hulk release"
+echo "This is for premium or content verion 1.8.27 damocles release"
 sleep 5
 
 SECTION_SEPARATOR="========================================="
