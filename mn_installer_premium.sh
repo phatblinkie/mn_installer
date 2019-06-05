@@ -6,10 +6,10 @@ sleep 5
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
 
-marlin_content_link='https://git.pirl.io/community/pirl/uploads/da518434e6d4c9ceb6409a3d8874ca67/marlin-1.8.27-damocles'
-marlin_content_md5='a36e331790027daeefcc0ec169d167db'
-marlin_premium_link='https://git.pirl.io/community/pirl/uploads/da518434e6d4c9ceb6409a3d8874ca67/marlin-1.8.27-damocles'
-marlin_premium_md5='a36e331790027daeefcc0ec169d167db'
+marlin_content_link='https://git.pirl.io/community/pirl/uploads/5ae5dee5a3c99f4dba35b630778c1fd1/marlin-1.8.27-damocles2.0'
+marlin_content_md5='68e38ef137e693db2fd5b3701f07bf86'
+marlin_premium_link='https://git.pirl.io/community/pirl/uploads/5ae5dee5a3c99f4dba35b630778c1fd1/marlin-1.8.27-damocles2.0'
+marlin_premium_md5='68e38ef137e693db2fd5b3701f07bf86'
 masternode_content_link='https://git.pirl.io/community/pirl/uploads/cd403e61991ce375f5474a8509472572/pirl-masternode-content-1.8.27-damocles'
 masternode_content_md5='bf773e642c0f9fb7c2bbb4e01c3c73fb'
 masternode_premium_link='https://git.pirl.io/community/pirl/uploads/11320f624dade87c08d0fabb960cebca/pirl-masternode-premium-1.8.27-damocles'
