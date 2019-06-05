@@ -10,10 +10,10 @@ marlin_content_link='https://git.pirl.io/community/pirl/uploads/da518434e6d4c9ce
 marlin_content_md5='a36e331790027daeefcc0ec169d167db'
 marlin_premium_link='https://git.pirl.io/community/pirl/uploads/da518434e6d4c9ceb6409a3d8874ca67/marlin-1.8.27-damocles'
 marlin_premium_md5='a36e331790027daeefcc0ec169d167db'
-masternode_content_link='https://git.pirl.io/community/pirl/uploads/47e87b2702fb7facf8619006b572a0d8/pirl-masternode-content-1.8.27-damocles'
-masternode_content_md5='426a011bb41e2c49890f34e77560b469'
-masternode_premium_link='https://git.pirl.io/community/pirl/uploads/9e5d5b3877929df8ba78ad65696f365a/pirl-masternode-premium-1.8.27-damocles'
-masternode_premium_md5='c373367dbed4b379f8a877668990e8e2'
+masternode_content_link='https://git.pirl.io/community/pirl/uploads/cd403e61991ce375f5474a8509472572/pirl-masternode-content-1.8.27-damocles'
+masternode_content_md5='bf773e642c0f9fb7c2bbb4e01c3c73fb'
+masternode_premium_link='https://git.pirl.io/community/pirl/uploads/11320f624dade87c08d0fabb960cebca/pirl-masternode-premium-1.8.27-damocles'
+masternode_premium_md5='01133078b1d6362bac955aa183075013'
 
 #determine if this is a content node
 PS3='Please enter your Masternode type: '
