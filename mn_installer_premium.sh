@@ -142,7 +142,7 @@ if [ -e $PIRL_PATH ]; then
 fi
 #get pirl node
 echo "downloading latest PIRL Masternode"
-wget -O $PIRL_PATH $DOWNLOAD_LINK_PIRL
+wget --no-check-certificate  -O $PIRL_PATH $DOWNLOAD_LINK_PIRL
 downloadresult=$?
 chmod 0755 $PIRL_PATH
 chmodresult=$?
@@ -172,7 +172,7 @@ if [ -e $MARLIN_PATH ]; then
 fi
 #get pirl-marlin node
 echo "downloading latest PIRL Marlin"
-wget -O $MARLIN_PATH $DOWNLOAD_LINK_MARLIN
+wget --no-check-certificate -O $MARLIN_PATH $DOWNLOAD_LINK_MARLIN
 downloadresult=$?
 chmod 0755 $MARLIN_PATH
 chmodresult=$?
