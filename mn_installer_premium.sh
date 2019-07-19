@@ -253,17 +253,17 @@ WantedBy=default.target
 homedir=/root
 if [[ ! -d $homedir/.marlin/ || ! -f $homedir/.marlin/config ]]; then
 	rm -rf $homedir/.marlin/
-	echo "Wait 5 seconds for pirlnode to run before initializing marlin"
-	echo -ne ".\r"
-	sleep 1
-	echo -ne "..\r"
-	sleep 1
-	echo -ne "...\r"
-	sleep 1
-	echo -ne "....\r"
-	sleep 1
-	echo -ne ".....\r"
-	sleep 1
+	echo "Wait 30 seconds for pirlnode to run before initializing marlin"
+	echo -ne "5.\r"
+	sleep 5
+	echo -ne "10..\r"
+	sleep 5
+	echo -ne "15...\r"
+	sleep 5
+	echo -ne "20....\r"
+	sleep 5
+	echo -ne "25.....\r"
+	sleep 5
 	/usr/bin/marlin init 1>/dev/null
 	
 	if [ -f $homedir/.marlin/config ]; then
