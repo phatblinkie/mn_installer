@@ -6,16 +6,26 @@ sleep 5
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
 
-marlin_content_link='https://git.pirl.io/community/pirl/uploads/5ae5dee5a3c99f4dba35b630778c1fd1/marlin-1.8.27-damocles2.0'
-marlin_content_md5='68e38ef137e693db2fd5b3701f07bf86'
-marlin_premium_link='https://git.pirl.io/community/pirl/uploads/5ae5dee5a3c99f4dba35b630778c1fd1/marlin-1.8.27-damocles2.0'
-marlin_premium_md5='68e38ef137e693db2fd5b3701f07bf86'
-masternode_content_link='https://git.pirl.io/community/pirl/uploads/cabf01995e4a7484c2de5b05dad49f86/pirl-masternode-content-1.8.27-damocles'
-masternode_content_md5='313493159ea44ee26f8fcfff74cff3b9'
-masternode_premium_link='https://git.pirl.io/community/pirl/uploads/e9d8c3e0871021932981c6f453b5d5ac/pirl-masternode-premium-1.8.27-damocles'
-masternode_premium_md5='401d75b95ebc6b85a8682b878c59200f'
+#file paths are now stored in version.txt
 
 #check for updates
+if [ -e version.txt ]
+then
+. version.txt
+#grab latest
+wget -O latest_version.txt https://raw.githubusercontent.com/phatblinkie/mn_installer/master/version.txt
+diff version.txt latest_version.txt >/dev/null
+ if [ "$?" -ne "0" ]
+  then
+  echo "version file missing, please do a git pull or run  git clone https://github.com/phatblinkie/mn_installer.git"
+ exit 1
+fi
+else
+ echo "version file missing, please do a git pull or run  git clone https://github.com/phatblinkie/mn_installer.git"
+ exit 1
+fi
+
+echo version check passed, using version $version
 
 #determine if this is a content node
 PS3='Please enter your Masternode type: '
