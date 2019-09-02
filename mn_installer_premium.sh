@@ -1,4 +1,6 @@
 #!/bin/bash
+#update on the fly
+git pull
 
 echo "This is for premium or content verion 1.8.27 damocles release"
 sleep 5
