@@ -15,6 +15,8 @@ masternode_content_md5='313493159ea44ee26f8fcfff74cff3b9'
 masternode_premium_link='https://git.pirl.io/community/pirl/uploads/e9d8c3e0871021932981c6f453b5d5ac/pirl-masternode-premium-1.8.27-damocles'
 masternode_premium_md5='401d75b95ebc6b85a8682b878c59200f'
 
+#check for updates
+
 #determine if this is a content node
 PS3='Please enter your Masternode type: '
 options=("Premium" "Content" "Quit")
@@ -72,48 +74,41 @@ if [ -f /usr/local/bin/pirl-premium-core ]
 echo $SECTION_SEPARATOR
 echo
 
-## https://poseidon.pirl.io/accounts/masternodes-list-private/
+## https://poseidon.pirl.io/dashboard/masternodes/
 MASTERNODE=""
-echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/
-It will have hyphens in it, like this marlin_content_linkc0c5dfdd-9ced-4b52-9448-74b66c2a6de0c0c5dfdd-9ced-4b52-9448-74b66c2a6de0"
-#no longer using the environment file
-#echo "Or leave it blank if you already have it written in $ENV_PATH and want no change"
-echo
-read -p 'Enter MN token:' MASTERNODE
-echo
+if [ -e /etc/pirlnode-env ]; then  . /etc/pirlnode-env ; echo masternode token found it is $MASTERNODE; fi
 
-#if [[ -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
-#	echo "Leaving MN token as is"
-#	echo
-# else
-# 	if [[ ! -f $ENV_PATH && "$MASTERNODE" = "" ]]; then
-#		echo "$ENV_PATH file for tokens doesn't exist"
-#	fi
-#	echo
-# 	rm -f $ENV_PATH
-#	while [ "$MASTERNODE" = "" ]; do
-#		echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/accounts/masternodes-list-private/"
-#		read -p 'Enter MN token:' MASTERNODE
-#		echo
-#	done
-# fi
+
+echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/dashboard/masternodes/"
+echo "It will have hyphens in it, like this df0683a-b314-4175-a36d-84c5a0fa1c"
+
+if [ "$MASTERNODE" != "" ]; then
+	echo "Leaving MN token [$MASTERNODE] as is"
+	echo
+else
+while [ "$MASTERNODE" = "" ]; do
+	echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/dashboard/masternodes/"
+	read -p 'Enter MN token:' MASTERNODE
+	done
+ fi
 
 echo $SECTION_SEPARATOR
 echo
 
-## https://poseidon.pirl.io/accounts/settings/
+## https://poseidon.pirl.io/account/profile/
 TOKEN=""
-#if [ "$MASTERNODE" != "" ]; then
-#	while [ "$TOKEN" = "" ]; do
-	  echo "Copy/Paste in your POSEIDON account's token.  It can be found at https://poseidon.pirl.io/accounts/settings/"
-	  echo
-	  read -p 'Enter TOKEN:' TOKEN
-	  echo
-#	done
-# else
-#	echo "Leaving POSEIDON token as is"
-# fi
-#echo
+#import if available
+if [ -e /etc/pirlnode-env ]; then  . /etc/pirlnode-env ; echo account token found it is $TOKEN; fi
+
+if [ "$TOKEN" != "" ]; then
+	echo "Leaving account token [$TOKEN] as is"
+	echo
+else
+while [ "$TOKEN" = "" ]; do
+	echo "Copy/Paste in the account token.  It can be found at https://poseidon.pirl.io/account/profile/"
+	read -p 'Enter account token:' TOKEN
+	done
+ fi
 
 echo $SECTION_SEPARATOR
 echo
