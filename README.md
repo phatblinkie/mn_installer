@@ -1,5 +1,8 @@
+# UPDATE: for centos users, you can now use the pirl repository. http://repo.pirl.io
+Added a script to help users install with the repository, it will overwrite the same file locations as this normal installer, but make future updates as easy as running a simple 'yum update' command.
+
 # mn_installer.sh
-This script will install a Premium or Content masternode https://git.pirl.io/community/pirl/-/tags/1.8.27-damocles for PIRL on stock Ubuntu, or centos.
+This script will install a Premium or Content masternode https://chaindata.pirl.network/1-9-12-lion/ for PIRL on stock Ubuntu, or centos.
 
 ## This script will do the following
 
