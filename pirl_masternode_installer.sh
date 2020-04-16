@@ -2,11 +2,12 @@
 #update on the fly
 git pull
 
-echo "This is for premium or content verion 1.8.27 damocles release"
+echo "This is for premium or content verion 1.9.12 Lion release"
 sleep 5
 
 SECTION_SEPARATOR="========================================="
 ENV_PATH=/etc/pirlnode-env
+mkdir -p /etc/pirl 2>/dev/null
 
 
 # download wget before pirl installation
@@ -106,7 +107,8 @@ echo "It will have hyphens in it, like this df0683a-b314-4175-a36d-84c5a0fa1c"
 
 if [ "$MASTERNODE" != "" ]; then
 	echo "Leaving MN token [$MASTERNODE] as is"
-	echo
+	mkdir -p /etc/pirl 2>/dev/null
+	echo ""
 else
 while [ "$MASTERNODE" = "" ]; do
 	echo "Copy/Paste in the MN token.  It can be found at https://poseidon.pirl.io/dashboard/masternodes/"
@@ -124,7 +126,7 @@ if [ -e /etc/pirlnode-env ]; then  . /etc/pirlnode-env ; echo account token foun
 
 if [ "$TOKEN" != "" ]; then
 	echo "Leaving account token [$TOKEN] as is"
-	/etc/pirlnode-env > /etc/pirl/pirlnode.conf
+	cat /etc/pirlnode-env > /etc/pirl/pirlnode.conf
 	echo
 else
 while [ "$TOKEN" = "" ]; do
