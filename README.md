@@ -1,5 +1,10 @@
 # UPDATE: for centos users, you can now use the pirl repository. http://repo.pirl.io
 Added a script to help users install with the repository, it will overwrite the same file locations as this normal installer, but make future updates as easy as running a simple 'yum update' command.
+to use this, run  	
+## To run this script
+Clone this git repository: `git clone https://github.com/phatblinkie/mn_installer.git`
+Change into the newly created directory: `cd mn_installer`
+Run this script via the command: `sudo ./install_PIRL_rpms.sh`
 
 # mn_installer.sh
 This script will install a Premium or Content masternode https://chaindata.pirl.network/1-9-12-lion/ for PIRL on stock Ubuntu, or centos.
