@@ -124,6 +124,7 @@ if [ -e /etc/pirlnode-env ]; then  . /etc/pirlnode-env ; echo account token foun
 
 if [ "$TOKEN" != "" ]; then
 	echo "Leaving account token [$TOKEN] as is"
+	/etc/pirlnode-env > /etc/pirl/pirlnode.conf
 	echo
 else
 while [ "$TOKEN" = "" ]; do
@@ -136,6 +137,7 @@ echo $SECTION_SEPARATOR
 echo
 
 echo -e "MASTERNODE=\"$MASTERNODE\"\nTOKEN=\"$TOKEN\"" > /etc/pirlnode-env
+echo -e "MASTERNODE=\"$MASTERNODE\"\nTOKEN=\"$TOKEN\"" > /etc/pirl/pirlnode.conf
 
 ############# grab the node binary and chmod ############################
 ###the chain will end up being stored on this users home dir, at /home/username/.pirl/
@@ -204,20 +206,24 @@ echo "[Unit]
 Description=Pirl Master Node
 After=network-online.target
 Wants=network-online.target
+
 [Service]
-;EnvironmentFile=$ENV_PATH
-Environment=MASTERNODE=$MASTERNODE
-Environment=TOKEN=$TOKEN
+EnvironmentFile=/etc/pirl/pirlnode.conf
 Type=simple
 User=root
 Group=root
 RestartSec=30s
-ExecStart=$PIRL_PATH --ws --wsorigins=* --wsaddr=0.0.0.0 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain="*" --mine --etherbase=0x0000000000000000000000000000000000000001
+ExecStart=/usr/bin/pirl --ws --wsorigins=* --wsaddr=0.0.0.0 --rpc --rpcaddr=0.0.0.0 --rpccorsdomain=* 
 Restart=always
 ExecStartPre=/bin/sleep 5
 RemainAfterExit=no
+
 [Install]
 WantedBy=multi-user.target
+[Unit]
+Description=Pirl Master Node
+After=network-online.target
+Wants=network-online.target
 ">/lib/systemd/system/pirl.service
 
 #tokens are now in the systemd files
@@ -245,17 +251,19 @@ echo "[Unit]
 Description=Pirl Client -- marlin content service
 After=network.target pirl.service
 Wants=network.target pirl.service
+
 [Service]
-;EnvironmentFile=$ENV_PATH
-Environment=MASTERNODE=$MASTERNODE
-Environment=TOKEN=$TOKEN
+EnvironmentFile=/etc/pirl/pirlnode.conf
 Type=simple
 User=root
 Group=root
 RestartSec=30s
-ExecStartPre=/bin/sleep 5
-ExecStart=$MARLIN_PATH daemon
+ExecStartPre=-/usr/bin/marlin init --profile=server
+ExecStartPre=-/usr/bin/marlin config --json Swarm.ConnMgr '{"HighWater": 500, "LowWater": 64, "Type": "basic", "GracePeriod": "15s"}'
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/bin/marlin daemon
 Restart=always
+
 [Install]
 WantedBy=default.target
 ">/lib/systemd/system/marlin.service
