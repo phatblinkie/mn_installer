@@ -16,7 +16,7 @@ This script will install a Premium or Content masternode https://chaindata.pirl.
 3. Optionally make a user, and home directory, to run the PIRL service.
 4. Download pirl premium masternode binary and set permissions on it.
 5. Download pirl premium marlin binary and set permissions on it.
-6. Setup a systemd service named pirlnode, enable it, and start it.
+6. Setup a configuration file named pirlnode.conf under /etc/pirl/ for the masternode tokens.
 7. Check out if pirl marlin was initialized before. If not will initialize it.
 8. Setup a systemd service named pirl and marlin, enable it, and start it.
 9. If user wants to change SSH port, install firewall and upgrade system, runs firewall.sh module.
